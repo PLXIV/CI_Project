@@ -1,5 +1,6 @@
 import random as rnd
-
+from enum import Enum
+from cell import Orientation
 
 class Square:
     MIN_DIST = 2 # Minimum distance between the border of the square and the division line
@@ -22,14 +23,14 @@ class Square:
         B = Square(row=self.row + h, col=self.col, w=self.w, h=self.h - h)
         cornersA = set(A.__get_corners())
         cornersB = set(B.__get_corners())
-        return A, B, list(cornersA.intersection(cornersB))
+        return A, B, list(cornersA.intersection(cornersB)), Orientation.Horizontal
 
     def __subdivide_horizontal(self, w):
         A = Square(row=self.row, col=self.col, w=w, h=self.h)
         B = Square(row=self.row, col=self.col + w, w=self.w - w, h=self.h)
         cornersA = set(A.__get_corners())
         cornersB = set(B.__get_corners())
-        return A, B, list(cornersA.intersection(cornersB))
+        return A, B, list(cornersA.intersection(cornersB)), Orientation.Vertical
 
     def is_indivisible(self):
         return (self.h - 2 * self.MIN_DIST) <= 0 and (self.w - 2 * self.MIN_DIST) <= 0
@@ -42,7 +43,9 @@ class Square:
             h = rnd.randint(self.MIN_DIST, self.h - self.MIN_DIST)
             return self.__subdivide_vertical(h)
 
-        if rnd.choice([True, False]):
+        subdivide_direction = rnd.choice([Orientation.Horizontal, Orientation.Vertical])
+
+        if  subdivide_direction == Orientation.Horizontal:
             h = rnd.randint(self.MIN_DIST, self.h - self.MIN_DIST)
             return self.__subdivide_vertical(h)
         else:

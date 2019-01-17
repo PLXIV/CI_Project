@@ -4,8 +4,8 @@ import threading
 
 if __name__ == "__main__":
 
-    map = Map(rows=40, cols=40, n_intersections=10)
-    map.grid.generate()
+    map = Map(rows=40, cols=40, n_intersections=20)
+    map.grid.generate(seed=120)
     print(map.grid)
     print(map.grid.intersections)
 

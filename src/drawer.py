@@ -1,7 +1,8 @@
 import pygame
 from time import time, sleep
 from math import floor
-from cell import CellType
+from cell import CellType, RoadDir
+from square import Orientation
 
 WIDTH = 600
 HEIGHT = 600
@@ -41,5 +42,31 @@ def step(screen, map):
         for col in range(0, map.grid.cols):
             x = MARGIN + col * size_x
             y = MARGIN + row * size_y
-            color = (80, 80, 80) if map.grid.get(row, col).type == CellType.Road else (255, 255, 255)
+            color = (0, 0, 0)
+            cell = map.grid.get(row, col)
+            if cell.type == CellType.Road:
+                if RoadDir.Up in cell.direction and RoadDir.Left in cell.direction:
+                    color = (255, 0, 255)
+                    #color = (255, 0, 0)
+                elif RoadDir.Up in cell.direction and RoadDir.Right in cell.direction:
+                    color = (0, 0, 255)
+                    #color = (255, 0, 0)
+                elif RoadDir.Down in cell.direction and RoadDir.Left in cell.direction:
+                    color = (0, 255, 0)
+                    #color = (255, 0, 0)
+                elif RoadDir.Down in cell.direction and RoadDir.Right in cell.direction:
+                    color = (255, 0, 0)
+                    #color = (255, 0, 0)
+                elif RoadDir.Up in cell.direction:
+                    color = (150, 150, 150)
+                elif RoadDir.Down in cell.direction:
+                    color = (200, 200, 200)
+                elif RoadDir.Left in cell.direction:
+                    color = (100, 100, 100)
+                elif RoadDir.Right in cell.direction:
+                    color = (0, 0, 0)
+                elif RoadDir.Unknown in cell.direction:
+                    color = (80, 80, 80)
+            else:
+                color = (255, 255, 255)
             pygame.draw.rect(screen, color, (x, y, size_x, size_y), 0)
