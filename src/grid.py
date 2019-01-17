@@ -1,4 +1,4 @@
-from cell import Cell, CellType
+from cell import CellType, CellBuilding, CellRoad, CellSidewalk, CellEmpty
 import random as rnd
 from math import sqrt
 from square import Square
@@ -32,8 +32,11 @@ class Grid:
         if self.n_intersections < 0:
             return
 
+        rows = self.rows // 2
+        cols = self.cols // 2
+
         # Create ROWSxCOLS matrix with default type building
-        self.__cells = [[Cell(CellType.Building) for _ in range(self.cols)] for _ in range(self.rows)]
+        self.__cells = [[CellEmpty() for _ in range(cols)] for _ in range(rows)]
         self.intersections = set()
 
         # In order to create the streets a recursive subdivision of the grid is performed. At each iteration
@@ -49,7 +52,7 @@ class Grid:
         #   |             |       |      *      |       |      *      |       |      *      |
         #   +-------------+       +------+------+       +------+------+       +------+------+
 
-        squares = [Square(row=0, col=0, w=self.cols - 1, h=self.rows - 1)]
+        squares = [Square(row=0, col=0, w=(cols - 1), h=(rows - 1))]
 
         while len(self.intersections) < self.n_intersections:
             square = rnd.choice(squares)
@@ -84,6 +87,27 @@ class Grid:
             # Build the roads for those new intersections
             self.__build_road(corners)
 
+        self.__subdivide_grid()
+
+
+    def __duplicate_elements(self, elements):
+        new_elements = []
+        for el in elements:
+            new_elements.append(el)
+            new_elements.append(el)
+        return new_elements
+
+    def __subdivide_grid(self):
+
+        updated_cells = []
+        for i, row in enumerate(self.__cells):
+            new_row = [CellRoad() if cell.type == CellType.Road else CellEmpty() for cell in row]
+            updated_cells.append(self.__duplicate_elements(row))
+            updated_cells.append(self.__duplicate_elements(new_row))
+
+        self.__cells = updated_cells
+
+
     def __is_border(self, corner):
         if corner[0] in [0, self.rows - 1]: return True
         if corner[1] in [0, self.cols - 1]: return True
@@ -99,12 +123,12 @@ class Grid:
             start = min([y1, y2])
             final = max([y1, y2]) + 1
             for y in range(start, final):
-                self.__cells[y][x1] = Cell(CellType.Road)
+                self.__cells[y][x1] = CellRoad()
         else:
             start = min([x1, x2])
             final = max([x1, x2]) + 1
             for x in range(start, final):
-                self.__cells[y1][x] = Cell(CellType.Road)
+                self.__cells[y1][x] = CellRoad()
 
     def __distance_to_nearest_intersection(self, intersection):
         min = float('+inf')
