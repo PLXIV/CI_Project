@@ -1,4 +1,4 @@
-from cell import CellType, CellBuilding, CellRoad, CellSidewalk, CellEmpty, RoadDir
+from cell import CellType, CellBuilding, CellRoad, CellSidewalk, CellEmpty, Direction
 import random as rnd
 from math import sqrt
 from square import Square
@@ -105,16 +105,22 @@ class Grid:
 
         self.__subdivide_grid()
         self.__setup_directions()
-        self.__setup_road_children()
+        self.__setup_road_connections()
         self.__cover_cells(cellToCover=CellType.Road, cellClass=CellSidewalk)
         self.__cover_cells(cellToCover=CellType.Sidewalk, cellClass=CellBuilding)
         self.__generate_crosswalks()
-        self.__generate_sidewalk_children()
+        self.__generate_sidewalk_connections()
         return True
 
-    def __generate_sidewalk_children(self):
-        return
-
+    def __generate_sidewalk_connections(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                cell = self.__cells[i][j]
+                if cell.type == CellType.Sidewalk:
+                    if (i + 1) < self.rows and self.__cells[i + 1][j].type == CellType.Sidewalk: cell.addChild(self.__cells[i + 1][j])
+                    if (i - 1) >= 0        and self.__cells[i - 1][j].type == CellType.Sidewalk: cell.addChild(self.__cells[i - 1][j])
+                    if (j + 1) < self.cols and self.__cells[i][j + 1].type == CellType.Sidewalk: cell.addChild(self.__cells[i][j + 1])
+                    if (j - 1) >= 0        and self.__cells[i][j - 1].type == CellType.Sidewalk: cell.addChild(self.__cells[i][j - 1])
 
     def __generate_crosswalks(self):
         for i in range(self.rows):
@@ -124,7 +130,6 @@ class Grid:
                     neighbours = self.__get_road_neighbours(i, j)
                     singles = self.__get_single_orientation(neighbours)
                     cell.hasCrosswalk = len(neighbours) > len(singles)
-
 
     def __cover_cells(self, cellToCover, cellClass):
         for i in range(self.rows):
@@ -149,14 +154,7 @@ class Grid:
                             self.__cells[i][j-1] = cellClass(i, j)
                             
 
-    def __setup_road_children(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                cell = self.__cells[i][j]
-                if cell.type == CellType.Road:
-                    cell.children = []
-                    cell.parents = []
-
+    def __setup_road_connections(self):
         for i in range(self.rows):
             for j in range(self.cols):
                 cell = self.__cells[i][j]
@@ -168,31 +166,31 @@ class Grid:
                         # If there is a road below and it is not pointing upwards:
                         if (i + 2) < self.rows:
                             child = self.__cells[i + 2][j]
-                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Up not in child.direction):
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or Direction.Up not in child.direction):
                                 cell.addChild(self.__cells[i + 1][j])
 
                         # If there is a road above and it is not pointing downwards:
                         if (i - 2) >= 0:
                             child = self.__cells[i - 2][j]
-                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Down not in child.direction):
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or Direction.Down not in child.direction):
                                 cell.addChild(self.__cells[i - 1][j])
 
                         # If there is a road right and it is not pointing left:
                         if (j + 2) < self.cols:
                             child = self.__cells[i][j + 2]
-                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Left not in child.direction):
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or Direction.Left not in child.direction):
                                 cell.addChild(self.__cells[i][j + 1])
 
                         # If there is a road left and it is not pointing right:
                         if (j - 2) >= 0:
                             child = self.__cells[i][j - 2]
-                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Right not in child.direction):
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or Direction.Right not in child.direction):
                                 cell.addChild(self.__cells[i][j - 1])
 
-                    if RoadDir.Up    in cell.direction and (i - 1) >= 0:        cell.addChild(self.__cells[i - 1][j])
-                    if RoadDir.Down  in cell.direction and (i + 1) < self.rows: cell.addChild(self.__cells[i + 1][j])
-                    if RoadDir.Left  in cell.direction and (j - 1) >= 0:        cell.addChild(self.__cells[i][j - 1])
-                    if RoadDir.Right in cell.direction and (j + 1) < self.cols: cell.addChild(self.__cells[i][j + 1])
+                    if Direction.Up    in cell.direction and (i - 1) >= 0:        cell.addChild(self.__cells[i - 1][j])
+                    if Direction.Down  in cell.direction and (i + 1) < self.rows: cell.addChild(self.__cells[i + 1][j])
+                    if Direction.Left  in cell.direction and (j - 1) >= 0:        cell.addChild(self.__cells[i][j - 1])
+                    if Direction.Right in cell.direction and (j + 1) < self.cols: cell.addChild(self.__cells[i][j + 1])
 
     def __setup_directions(self):
         # Horizontal pass
@@ -203,8 +201,8 @@ class Grid:
                 next_cell = self.__cells[i][j + 1]
 
                 if curr_cell.type == CellType.Road and Orientation.Vertical in curr_cell.orientation:
-                    curr_cell.direction = [RoadDir.Down]
-                    next_cell.direction = [RoadDir.Up]
+                    curr_cell.direction = [Direction.Down]
+                    next_cell.direction = [Direction.Up]
                     j += 1
 
                 j += 1
@@ -217,8 +215,8 @@ class Grid:
                 next_cell = self.__cells[i + 1][j]
 
                 if curr_cell.type == CellType.Road and Orientation.Horizontal in curr_cell.orientation:
-                    curr_cell.direction = [RoadDir.Left]
-                    next_cell.direction = [RoadDir.Right]
+                    curr_cell.direction = [Direction.Left]
+                    next_cell.direction = [Direction.Right]
                     i += 1
 
                 i += 1

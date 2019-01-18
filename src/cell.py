@@ -14,7 +14,7 @@ class CellType(Enum):
     Empty = 4
 
 
-class RoadDir(Enum):
+class Direction(Enum):
     Up = 1
     Down = 2
     Left = 3
@@ -47,7 +47,7 @@ class CellRoad(Cell):
 
     def __init__(self, row, col):
         super().__init__(CellType.Road, row, col)
-        self.direction = [RoadDir.Unknown]
+        self.direction = [Direction.Unknown]
         self.orientation = [Orientation.Unknown]
         self.children = []
         self.parents = []
@@ -73,13 +73,13 @@ class CellRoad(Cell):
         for element_list in [self.children, self.parents]:
             for element in element_list:
                 if element.row == self.row + 1:
-                    active.append(RoadDir.Down)
+                    active.append(Direction.Down)
                 elif element.row == self.row - 1:
-                    active.append(RoadDir.Up)
+                    active.append(Direction.Up)
                 elif element.col == self.col + 1:
-                    active.append(RoadDir.Right)
+                    active.append(Direction.Right)
                 elif element.col == self.col - 1:
-                    active.append(RoadDir.Left)
+                    active.append(Direction.Left)
         return active
 
 class CellBuilding(Cell):

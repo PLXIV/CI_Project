@@ -5,7 +5,7 @@ import threading
 if __name__ == "__main__":
 
     # City
-    city = City(rows=20, cols=20, n_intersections=3)
+    city = City(rows=12, cols=12, n_intersections=1)
     city.grid.generate()
     #print(city.grid)
     #print(city.grid.intersections)
