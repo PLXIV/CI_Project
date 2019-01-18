@@ -1,7 +1,7 @@
 import pygame
 
 
-class RoadSprite(pygame.sprite.Sprite):
+class CellSprite(pygame.sprite.Sprite):
 
     def __init__(self, image, width, height, x, y):
         pygame.sprite.Sprite.__init__(self)

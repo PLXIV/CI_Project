@@ -3,7 +3,7 @@ from pygame.time import Clock
 from math import ceil
 from cell import CellType, RoadDir
 from view.fps_counter import FPSCounter
-from view.road_sprite import RoadSprite
+from view.cell_sprite import CellSprite
 import view.locations as loc
 
 class Drawer:
@@ -21,12 +21,12 @@ class Drawer:
         self.fps_counter = FPSCounter()
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.running = False
-        self.road_group = None
+        self.cell_group = None
 
         self.__gen_road_groups()
 
     def __gen_road_groups(self):
-        self.road_group = pygame.sprite.Group()
+        self.cell_group = pygame.sprite.Group()
 
         size_x = ceil((self.w - self.margin * 2) / self.city.grid.cols)
         size_y = ceil((self.h - self.margin * 2) / self.city.grid.rows)
@@ -60,7 +60,7 @@ class Drawer:
                     elif RoadDir.Left    in cell.direction: image = images[loc.ROAD_LEFT]
                     elif RoadDir.Right   in cell.direction: image = images[loc.ROAD_RIGHT]
 
-                    self.road_group.add(RoadSprite(image, size_x, size_y, x, y))
+                    self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
     def run(self):
         self.running = True
@@ -80,4 +80,4 @@ class Drawer:
 
     def __step(self):
         self.screen.fill((255, 255, 255))
-        self.road_group.draw(self.screen)
+        self.cell_group.draw(self.screen)
