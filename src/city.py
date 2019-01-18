@@ -1,6 +1,7 @@
 from grid import Grid
 
-class Map:
+
+class City:
 
     def __init__(self, rows, cols, n_intersections):
         self.grid = Grid(rows, cols, n_intersections)

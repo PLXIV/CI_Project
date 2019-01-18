@@ -25,7 +25,6 @@ class Grid:
         assert(col < self.cols)
         return self.__cells[row][col]
 
-    # Generates a random grid
     def generate(self, seed=None):
         if seed is not None:
             rnd.seed(seed)
@@ -33,6 +32,14 @@ class Grid:
         if self.n_intersections < 0:
             return
 
+        max_iters = self.n_intersections * 2
+        while not self.__generate_try(max_iters):
+            seed = rnd.randint(1, 99999)
+            print('Can not create map, retrying... seed={:d}'.format(seed))
+            rnd.seed(seed)
+
+    # Generates a random grid
+    def __generate_try(self, max_iters=0):
         rows = self.rows // 2
         cols = self.cols // 2
 
@@ -55,7 +62,14 @@ class Grid:
 
         squares = [Square(row=0, col=0, w=(cols - 1), h=(rows - 1))]
 
+        iters = 0
         while len(self.intersections) < self.n_intersections:
+            # Check if there are too many iterations, a.k.a we are stuck
+            iters += 1
+            if 0 < max_iters < iters:
+                return False
+
+            # Choose a square to subdivide
             square = rnd.choice(squares)
 
             # If the square is not divisible into intersections, choose another one to subdivide
@@ -91,6 +105,7 @@ class Grid:
         self.__subdivide_grid()
         self.__setup_directions()
         self.__setup_next()
+        return True
 
     def __setup_next(self):
         for i in range(self.rows):

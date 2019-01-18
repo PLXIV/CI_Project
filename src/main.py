@@ -1,15 +1,19 @@
-from map import Map
-from drawer import display
+from city import City
+from view.drawer import Drawer
 import threading
 
 if __name__ == "__main__":
 
-    map = Map(rows=32, cols=32, n_intersections=20)
-    map.grid.generate(seed=120)
-    print(map.grid)
-    print(map.grid.intersections)
+    # City
+    city = City(rows=30, cols=30, n_intersections=12)
+    city.grid.generate(seed=120)
+    print(city.grid)
+    print(city.grid.intersections)
 
-    t = threading.Thread(target=display, args=[map])
-    t.start()
+    # Window
+    drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)
+    drawer.run()
+    #t = threading.Thread(target=drawer.run, args=[])
+    #t.start()
 
-    t.join()
+    #t.join()
