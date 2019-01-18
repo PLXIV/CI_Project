@@ -55,6 +55,7 @@ class CellRoad(Cell):
         self.hasLights = False
         self.lights = Lights.CARS_GREEN
         self.car = None
+        self.destinations = {}
 
     def addChild(self, child):
         if child not in self.children:

@@ -11,5 +11,5 @@ class Car:
 
     def move(self):
         self.cell.car = None
-        self.cell = rnd.choice(self.cell.children)
+        self.cell = self.cell.destinations[self.despawn]
         self.cell.car = self
