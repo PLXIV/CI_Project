@@ -105,10 +105,26 @@ class Grid:
 
         self.__subdivide_grid()
         self.__setup_directions()
-        self.__setup_children()
+        self.__setup_road_children()
         self.__cover_cells(cellToCover=CellType.Road, cellClass=CellSidewalk)
         self.__cover_cells(cellToCover=CellType.Sidewalk, cellClass=CellBuilding)
+        self.__generate_crosswalks()
+        self.__generate_sidewalk_children()
         return True
+
+    def __generate_sidewalk_children(self):
+        return
+
+
+    def __generate_crosswalks(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                cell = self.__cells[i][j]
+                if cell.type == CellType.Road:
+                    neighbours = self.__get_road_neighbours(i, j)
+                    singles = self.__get_single_orientation(neighbours)
+                    cell.hasCrosswalk = len(neighbours) > len(singles)
+
 
     def __cover_cells(self, cellToCover, cellClass):
         for i in range(self.rows):
@@ -133,7 +149,7 @@ class Grid:
                             self.__cells[i][j-1] = cellClass(i, j)
                             
 
-    def __setup_children(self):
+    def __setup_road_children(self):
         for i in range(self.rows):
             for j in range(self.cols):
                 cell = self.__cells[i][j]
@@ -211,7 +227,6 @@ class Grid:
         for intersection in self.intersections:
             cell = self.__cells[intersection[0]][intersection[1]]
             cell.orientation = [Orientation.Vertical, Orientation.Horizontal]
-
 
         for intersection in self.intersections:
             x = intersection[0]

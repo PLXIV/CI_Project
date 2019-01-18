@@ -22,6 +22,11 @@ class RoadDir(Enum):
     Unknown = 5
 
 
+class Lights(Enum):
+    CARS_RED = 1
+    CARS_GREEN = 2
+
+
 class Cell:
 
     def __init__(self, cell_type, row, col):
@@ -46,6 +51,9 @@ class CellRoad(Cell):
         self.orientation = [Orientation.Unknown]
         self.children = []
         self.parents = []
+        self.hasCrosswalk = False
+        self.hasLights = False
+        self.lights = Lights.CARS_GREEN
 
     def addChild(self, child):
         if child not in self.children:
@@ -53,12 +61,12 @@ class CellRoad(Cell):
             child.parents.append(self)
 
     def duplicate(self):
-        dupli = CellRoad(self.row, self.col)
-        dupli.direction = self.direction.copy()
-        dupli.orientation = self.orientation.copy()
-        dupli.children = self.children.copy()
-        dupli.parents = self.parents.copy()
-        return dupli
+        duplicated = CellRoad(self.row, self.col)
+        duplicated.direction = self.direction.copy()
+        duplicated.orientation = self.orientation.copy()
+        duplicated.children = self.children.copy()
+        duplicated.parents = self.parents.copy()
+        return duplicated
 
     def active_sides(self):
         active = []
@@ -84,6 +92,13 @@ class CellSidewalk(Cell):
 
     def __init__(self, row, col):
         super().__init__(CellType.Sidewalk, row, col)
+        self.children = []
+        self.parents = []
+
+    def addChild(self, child):
+        if child not in self.children:
+            self.children.append(child)
+            child.parents.append(self)
 
 
 class CellEmpty(Cell):

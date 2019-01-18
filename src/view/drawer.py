@@ -73,6 +73,13 @@ class Drawer:
                         elif RoadDir.Left  not in active_sides: image = images[loc.ROAD_T_LEFT]
                         elif RoadDir.Right not in active_sides: image = images[loc.ROAD_T_RIGHT]
 
+                    elif cell.hasCrosswalk:
+                        pass
+                        #if   RoadDir.Up    in cell.direction: image = images[loc.ROAD_DOWN]
+                        #elif RoadDir.Down  in cell.direction: image = images[loc.ROAD_UP]
+                        #elif RoadDir.Left  in cell.direction: image = images[loc.ROAD_RIGHT]
+                    #elif RoadDir.Right in cell.direction: image = images[loc.ROAD_LEFT]
+
                     else:
                         if   RoadDir.Up    in cell.direction: image = images[loc.ROAD_UP]
                         elif RoadDir.Down  in cell.direction: image = images[loc.ROAD_DOWN]
