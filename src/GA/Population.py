@@ -7,7 +7,7 @@ from datetime import timedelta
 from itertools import starmap
 from multiprocessing import Pool
 
-PROCESSES = 4
+PROCESSES = 8
 
 
 class Population(object):
@@ -15,12 +15,13 @@ class Population(object):
     def __init__(self,
                  generation_id=0, pop_size=100, dna_size=10, elitism_n=2,
                  truncation_percentage=0.33, cross_over_points=3,
-                 crossover_probability=0.9, mutation_probability=0.01):
+                 crossover_probability=0.9, mutation_probability=0.01, multiprocessing = True):
 
         self.generation_id = generation_id
         self.pop_size = pop_size
         self.dna_size = dna_size
 
+        self.multiprocessing = multiprocessing
         self.genes = self._initPopulation()
         self.elitism_n = elitism_n
         self.crossover_points = cross_over_points
@@ -59,9 +60,9 @@ class Population(object):
     @staticmethod
     def compute_score(gen):
         target = np.zeros(10)
-        a = 0
-        for i in range(1, 2 * 10 ** 3):
-            a = np.math.factorial(i)
+#        a = 0
+#        for i in range(1, 2 * 10 ** 3):
+#            a = np.math.factorial(i)
         return 1 - distance.hamming(target, gen.gene)
 
     @staticmethod
@@ -70,13 +71,15 @@ class Population(object):
         print(gen.score, score)
 
     def run_population(self):
-        pool = Pool(PROCESSES)
-        scores = pool.map(self.compute_score,self.genes)
-        pool.close()
-        for i, s in enumerate(scores):
-            self.genes[i].score = s
-        # for g in range(len(self.genes)):
-        #    self.genes[g].score = self.compute_score(self.genes[g].gene)
+        if self.multiprocessing:            
+            pool = Pool(PROCESSES)
+            scores = pool.map(self.compute_score,self.genes)
+            pool.close()
+            for i, s in enumerate(scores):
+                self.genes[i].score = s
+        else:
+             for g in range(len(self.genes)):
+                self.genes[g].score = self.compute_score(self.genes[g])
 
     def elitism(self):
         scores = self.get_scores()
@@ -138,7 +141,7 @@ if __name__ == "__main__":
     init = time()
     a = Population(generation_id=0, pop_size=10, dna_size=10, elitism_n=2,
                    truncation_percentage=0.33, cross_over_points=3,
-                   crossover_probability=0.9, mutation_probability=0.01)
+                   crossover_probability=0.9, mutation_probability=0.01, multiprocessing = False)
 
     results = []
     for i in range(100):
