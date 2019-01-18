@@ -37,6 +37,8 @@ class Drawer:
             loc.ROAD_LEFT:  pygame.image.load(loc.ROAD_LEFT).convert(),
             loc.ROAD_RIGHT: pygame.image.load(loc.ROAD_RIGHT).convert(),
             loc.ROAD_CROSS: pygame.image.load(loc.ROAD_CROSS).convert(),
+            loc.SIDEWALK:   pygame.image.load(loc.SIDEWALK).convert(),
+            loc.HOUSE: pygame.image.load(loc.HOUSE).convert()
         }
 
         for row in range(0, self.city.grid.rows):
@@ -45,6 +47,15 @@ class Drawer:
                 y = self.margin + row * size_y
 
                 cell = self.city.grid.get(row, col)
+                
+                if cell.type == CellType.Sidewalk:
+                    image = images[loc.SIDEWALK]
+                    self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
+
+                if cell.type == CellType.Building:
+                    image = images[loc.HOUSE]
+                    self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
+
                 if cell.type == CellType.Road:
                     image = None
                     if RoadDir.Up in cell.direction and RoadDir.Left in cell.direction:
