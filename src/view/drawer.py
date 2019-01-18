@@ -42,6 +42,9 @@ class Drawer:
             loc.HOUSE_1:      pygame.image.load(loc.HOUSE_1).convert(),
             loc.HOUSE_2:      pygame.image.load(loc.HOUSE_2).convert(),
             loc.HOUSE_3:      pygame.image.load(loc.HOUSE_3).convert(),
+            loc.HOUSE_4:      pygame.image.load(loc.HOUSE_4).convert(),
+            loc.HOUSE_5:      pygame.image.load(loc.HOUSE_5).convert(),
+            loc.HOUSE_6:      pygame.image.load(loc.HOUSE_6).convert(),
             loc.ROAD_T_DOWN:  pygame.image.load(loc.ROAD_T_DOWN).convert(),
             loc.ROAD_T_UP:    pygame.image.load(loc.ROAD_T_UP).convert(),
             loc.ROAD_T_LEFT:  pygame.image.load(loc.ROAD_T_LEFT).convert(),
@@ -62,7 +65,7 @@ class Drawer:
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
                 if cell.type == CellType.Building:
-                    house_array = [loc.HOUSE_1, loc.HOUSE_3]
+                    house_array = [loc.HOUSE_1, loc.HOUSE_3, loc.HOUSE_4, loc.HOUSE_5, loc.HOUSE_6]
                     image = images[choice(house_array)]
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
