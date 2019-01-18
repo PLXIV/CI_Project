@@ -44,7 +44,7 @@ class Grid:
         cols = self.cols // 2
 
         # Create ROWSxCOLS matrix with default type building
-        self.__cells = [[CellEmpty() for _ in range(cols)] for _ in range(rows)]
+        self.__cells = [[CellEmpty(row, col) for col in range(cols)] for row in range(rows)]
         self.intersections = set()
 
         # In order to create the streets a recursive subdivision of the grid is performed. At each iteration
@@ -112,11 +112,17 @@ class Grid:
             for j in range(self.cols):
                 cell = self.__cells[i][j]
                 if cell.type == CellType.Road:
-                    cell.next = []
-                    if RoadDir.Up    in cell.direction and (i - 1) >= 0:        cell.next.append(self.__cells[i - 1][j])
-                    if RoadDir.Down  in cell.direction and (i + 1) < self.rows: cell.next.append(self.__cells[i + 1][j])
-                    if RoadDir.Left  in cell.direction and (j - 1) >= 0:        cell.next.append(self.__cells[i][j - 1])
-                    if RoadDir.Right in cell.direction and (j + 1) < self.cols: cell.next.append(self.__cells[i][j + 1])
+                    cell.children = []
+                    cell.parents = []
+
+        for i in range(self.rows):
+            for j in range(self.cols):
+                cell = self.__cells[i][j]
+                if cell.type == CellType.Road:
+                    if RoadDir.Up    in cell.direction and (i - 1) >= 0:        cell.addChild(self.__cells[i - 1][j])
+                    if RoadDir.Down  in cell.direction and (i + 1) < self.rows: cell.addChild(self.__cells[i + 1][j])
+                    if RoadDir.Left  in cell.direction and (j - 1) >= 0:        cell.addChild(self.__cells[i][j - 1])
+                    if RoadDir.Right in cell.direction and (j + 1) < self.cols: cell.addChild(self.__cells[i][j + 1])
 
     def __setup_directions(self):
         # Horizontal pass
@@ -195,13 +201,20 @@ class Grid:
 
     def __subdivide_grid(self):
 
+        # Duplicate cells
         updated_cells = []
         for i, row in enumerate(self.__cells):
             new_row = [cell.duplicate() if cell.type == CellType.Road else CellEmpty() for cell in row]
             updated_cells.append(self.__duplicate_elements(row))
             updated_cells.append(self.__duplicate_elements(new_row))
-
         self.__cells = updated_cells
+
+        # Fix row and col numbers
+        for row in range(self.rows):
+            for col in range(self.cols):
+                self.__cells[row][col].row = row
+                self.__cells[row][col].col = col
+
         new_intersections = []
         for intersection in self.intersections:
             x = intersection[0] * 2
@@ -229,13 +242,13 @@ class Grid:
             start = min([y1, y2])
             final = max([y1, y2]) + 1
             for y in range(start, final):
-                self.__cells[y][x1] = CellRoad()
+                self.__cells[y][x1] = CellRoad(y, x1)
                 self.__cells[y][x1].orientation = [orientation]
         else:
             start = min([x1, x2])
             final = max([x1, x2]) + 1
             for x in range(start, final):
-                self.__cells[y1][x] = CellRoad()
+                self.__cells[y1][x] = CellRoad(y1, x)
                 self.__cells[y1][x].orientation = [orientation]
 
     def __distance_to_nearest_intersection(self, intersection):
