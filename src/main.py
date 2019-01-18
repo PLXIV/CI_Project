@@ -11,8 +11,8 @@ def run_city(city):
 if __name__ == "__main__":
 
     # City
-    city = City(rows=20, cols=20, n_intersections=8)
-    city.grid.generate(seed=120)
+    city = City(rows=20, cols=20, n_intersections=4)
+    city.grid.generate(seed=12)
 
     # Graphics
     drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)

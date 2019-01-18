@@ -2,7 +2,7 @@ from cell import CellType, CellBuilding, CellRoad, CellSidewalk, CellEmpty, Dire
 import random as rnd
 from math import sqrt
 from square import Square
-import time
+from bfs import generate_bfs_matrix
 from square import Orientation
 
 # The grid represents the city blocks and streets
@@ -19,6 +19,7 @@ class Grid:
         self.__cells = [[]]
         self.spawn_roads = []
         self.despawn_roads = []
+        self.destinations = {}
 
     # Get a Cell from the grid
     def get(self, row, col):
@@ -114,6 +115,7 @@ class Grid:
         self.__generate_sidewalk_connections()
         self.__set_spawn_roads()
         self.__set_despawn_roads()
+        self.destinations = generate_bfs_matrix(self)
         return True
 
     def __set_spawn_roads(self):
