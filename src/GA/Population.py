@@ -1,4 +1,4 @@
-from Gene import *
+from GA.Gene import *
 import numpy as np
 import random
 from scipy.spatial import distance
@@ -7,7 +7,7 @@ from datetime import timedelta
 from itertools import starmap
 from multiprocessing import Pool
 
-PROCESSES = 4
+PROCESSES = 6
 
 
 class Population(object):

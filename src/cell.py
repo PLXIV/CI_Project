@@ -41,7 +41,7 @@ class Cell:
             return "□"
 
     def __repr__(self):
-        return '({:d},{:d})'.format(self.row, self.col)
+        return 'Cell: ({:d},{:d})'.format(self.row, self.col)
 
 class CellRoad(Cell):
 
@@ -54,6 +54,7 @@ class CellRoad(Cell):
         self.hasCrosswalk = False
         self.hasLights = False
         self.lights = Lights.CARS_GREEN
+        self.car = None
 
     def addChild(self, child):
         if child not in self.children:

@@ -1,19 +1,24 @@
 from city import City
 from view.drawer import Drawer
 import threading
+from time import sleep
+
+def run_city(city):
+    for i in range(100):
+        city.step()
+        sleep(1)
 
 if __name__ == "__main__":
 
     # City
-    city = City(rows=12, cols=12, n_intersections=1)
-    city.grid.generate()
-    #print(city.grid)
-    #print(city.grid.intersections)
+    city = City(rows=20, cols=20, n_intersections=8)
+    city.grid.generate(seed=120)
 
-    # Window
+    # Graphics
     drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)
-    drawer.run()
-    #t = threading.Thread(target=drawer.run, args=[])
-    #t.start()
 
-    #t.join()
+    # Run
+    t = threading.Thread(target=run_city, args=[city])
+    t.start()
+    drawer.run()
+    t.join()

@@ -1,0 +1,41 @@
+import pygame
+
+
+class CarSprite(pygame.sprite.Sprite):
+
+    def __init__(self, image, size, car, margin_w, margin_h):
+        pygame.sprite.Sprite.__init__(self)
+        self.original = image
+        self.car = car
+        self.margin_w = margin_w
+        self.margin_h = margin_h
+        self.size = size
+
+        if image is None:
+            self.image = pygame.Surface([size, size])
+            self.image.fill((0, 0, 0))
+        else:
+            self.image = pygame.transform.scale(self.original, (size, size))
+            self.image.set_colorkey((0, 0, 0))
+
+        self.rect = self.image.get_rect()
+        self.rect.x = margin_w + car.cell.col * size
+        self.rect.y = margin_h + car.cell.row * size
+
+    def resize(self, size, margin_w, margin_h):
+        self.margin_w = margin_w
+        self.margin_h = margin_h
+        self.size = size
+        if self.original is None:
+            self.image = pygame.Surface([size, size])
+            self.image.fill((0, 0, 0))
+        else:
+            self.image = pygame.transform.scale(self.original, (size, size))
+            self.image.set_colorkey((0, 0, 0))
+        self.rect = self.image.get_rect()
+        self.rect.x = self.margin_w + self.car.cell.col * size
+        self.rect.y = self.margin_h + self.car.cell.row * size
+
+    def update(self):
+        self.rect.x = self.margin_w + self.car.cell.col * self.size
+        self.rect.y = self.margin_h + self.car.cell.row * self.size

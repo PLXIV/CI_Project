@@ -17,6 +17,8 @@ class Grid:
         self.n_intersections = n_intersections
         self.intersections = set()
         self.__cells = [[]]
+        self.spawn_roads = []
+        self.despawn_roads = []
 
     # Get a Cell from the grid
     def get(self, row, col):
@@ -110,7 +112,23 @@ class Grid:
         self.__cover_cells(cellToCover=CellType.Sidewalk, cellClass=CellBuilding)
         self.__generate_crosswalks()
         self.__generate_sidewalk_connections()
+        self.__set_spawn_roads()
+        self.__set_despawn_roads()
         return True
+
+    def __set_spawn_roads(self):
+        self.spawn_roads = []
+        for row in self.__cells:
+            for cell in row:
+                if cell.type == CellType.Road and len(cell.parents) == 0:
+                    self.spawn_roads.append(cell)
+
+    def __set_despawn_roads(self):
+        self.despawn_roads = []
+        for row in self.__cells:
+            for cell in row:
+                if cell.type == CellType.Road and len(cell.children) == 0:
+                    self.despawn_roads.append(cell)
 
     def __generate_sidewalk_connections(self):
         for i in range(self.rows):
@@ -130,6 +148,7 @@ class Grid:
                     neighbours = self.__get_road_neighbours(i, j)
                     singles = self.__get_single_orientation(neighbours)
                     cell.hasCrosswalk = len(neighbours) > len(singles)
+                    cell.hasLights = len(neighbours) > len(singles)
 
     def __cover_cells(self, cellToCover, cellClass):
         for i in range(self.rows):
