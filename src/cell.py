@@ -38,15 +38,15 @@ class CellRoad(Cell):
 
     def __init__(self):
         super().__init__(CellType.Road)
-        self.direction = RoadDir.Unknown
-        self.orientation = Orientation.Unknown
-        self.next = None
+        self.direction = [RoadDir.Unknown]
+        self.orientation = [Orientation.Unknown]
+        self.next = []
 
     def duplicate(self):
         dupli = CellRoad()
-        dupli.direction = self.direction
-        dupli.orientation = self.orientation
-        dupli.next = self.next
+        dupli.direction = self.direction.copy()
+        dupli.orientation = self.orientation.copy()
+        dupli.next = self.next.copy()
         return dupli
 
 class CellBuilding(Cell):

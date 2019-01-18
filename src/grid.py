@@ -90,6 +90,18 @@ class Grid:
 
         self.__subdivide_grid()
         self.__setup_directions()
+        self.__setup_next()
+
+    def __setup_next(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                cell = self.__cells[i][j]
+                if cell.type == CellType.Road:
+                    cell.next = []
+                    if RoadDir.Up    in cell.direction and (i - 1) >= 0:        cell.next.append(self.__cells[i - 1][j])
+                    if RoadDir.Down  in cell.direction and (i + 1) < self.rows: cell.next.append(self.__cells[i + 1][j])
+                    if RoadDir.Left  in cell.direction and (j - 1) >= 0:        cell.next.append(self.__cells[i][j - 1])
+                    if RoadDir.Right in cell.direction and (j + 1) < self.cols: cell.next.append(self.__cells[i][j + 1])
 
     def __setup_directions(self):
         # Horizontal pass

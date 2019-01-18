@@ -47,16 +47,12 @@ def step(screen, map):
             if cell.type == CellType.Road:
                 if RoadDir.Up in cell.direction and RoadDir.Left in cell.direction:
                     color = (255, 0, 255)
-                    #color = (255, 0, 0)
                 elif RoadDir.Up in cell.direction and RoadDir.Right in cell.direction:
                     color = (0, 0, 255)
-                    #color = (255, 0, 0)
                 elif RoadDir.Down in cell.direction and RoadDir.Left in cell.direction:
                     color = (0, 255, 0)
-                    #color = (255, 0, 0)
                 elif RoadDir.Down in cell.direction and RoadDir.Right in cell.direction:
                     color = (255, 0, 0)
-                    #color = (255, 0, 0)
                 elif RoadDir.Up in cell.direction:
                     color = (150, 150, 150)
                 elif RoadDir.Down in cell.direction:
