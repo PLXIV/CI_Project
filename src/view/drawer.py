@@ -1,8 +1,9 @@
 import pygame
-from time import time, sleep
+from pygame.time import Clock
 from math import ceil
 from cell import CellType, RoadDir
 from view.fps_counter import FPSCounter
+from view.road_sprite import RoadSprite
 
 
 class Drawer:
@@ -11,6 +12,7 @@ class Drawer:
         pygame.init()
         pygame.display.set_caption("CI project")
 
+        self.clock = Clock()
         self.w = width
         self.h = height
         self.margin = margin
@@ -19,30 +21,12 @@ class Drawer:
         self.fps_counter = FPSCounter()
         self.screen = pygame.display.set_mode((self.w, self.h))
         self.running = False
+        self.road_group = None
 
-    def events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
+        self.__gen_road_groups()
 
-    def run(self):
-        self.running = True
-
-        now = time()
-        next_frame = now + 1.0 / self.fps_target
-        while self.running:
-            self.step()
-            self.events()
-            pygame.display.update()
-            # Frames
-            print('\rFPS: {:.1f}  '.format(self.fps_counter.tick()), end='')
-            while now < next_frame:
-                sleep(next_frame - now)
-                now = time()
-            next_frame += 1.0 / self.fps_target
-
-    def step(self):
-        self.screen.fill((255, 255, 255))
+    def __gen_road_groups(self):
+        self.road_group = pygame.sprite.Group()
 
         size_x = ceil((self.w - self.margin * 2) / self.city.grid.cols)
         size_y = ceil((self.h - self.margin * 2) / self.city.grid.rows)
@@ -72,6 +56,24 @@ class Drawer:
                         color = (0, 0, 0)
                     elif RoadDir.Unknown in cell.direction:
                         color = (80, 80, 80)
-                else:
-                    color = (255, 255, 255)
-                pygame.draw.rect(self.screen, color, (x, y, size_x, size_y), 0)
+                    self.road_group.add(RoadSprite(color, size_x, size_y, x, y))
+
+    def run(self):
+        self.running = True
+
+        while self.running:
+            self.__step()
+            self.__events()
+            pygame.display.update()
+            # Frames
+            print('\rFPS: {:.1f}  '.format(self.fps_counter.tick()), end='')
+            self.clock.tick(self.fps_target)
+
+    def __events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+
+    def __step(self):
+        self.screen.fill((255, 255, 255))
+        self.road_group.draw(self.screen)
