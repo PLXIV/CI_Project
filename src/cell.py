@@ -24,8 +24,10 @@ class RoadDir(Enum):
 
 class Cell:
 
-    def __init__(self, cell_type):
+    def __init__(self, cell_type, row, col):
         self.type = cell_type
+        self.row = row
+        self.col = col
 
     def __str__(self):
         if self.type == CellType.Road:
@@ -36,35 +38,41 @@ class Cell:
 
 class CellRoad(Cell):
 
-    def __init__(self):
-        super().__init__(CellType.Road)
+    def __init__(self, row, col):
+        super().__init__(CellType.Road, row, col)
         self.direction = [RoadDir.Unknown]
         self.orientation = [Orientation.Unknown]
-        self.next = []
+        self.children = []
+        self.parents = []
+
+    def addChild(self, child):
+        self.children.append(child)
+        child.parents.append(self)
 
     def duplicate(self):
-        dupli = CellRoad()
+        dupli = CellRoad(self.row, self.col)
         dupli.direction = self.direction.copy()
         dupli.orientation = self.orientation.copy()
-        dupli.next = self.next.copy()
+        dupli.children = self.children.copy()
+        dupli.parents = self.parents.copy()
         return dupli
 
 class CellBuilding(Cell):
 
-    def __init__(self):
-        super().__init__(CellType.Building)
+    def __init__(self, row, col):
+        super().__init__(CellType.Building, row, col)
 
 
 class CellSidewalk(Cell):
 
-    def __init__(self):
-        super().__init__(CellType.Sidewalk)
+    def __init__(self, row, col):
+        super().__init__(CellType.Sidewalk, row, col)
 
 
 class CellEmpty(Cell):
 
-    def __init__(self):
-        super().__init__(CellType.Empty)
+    def __init__(self, row=0, col=0):
+        super().__init__(CellType.Empty, row, col)
 
     def duplicate(self):
-        return CellEmpty()
+        return CellEmpty(self.row, self.col)
