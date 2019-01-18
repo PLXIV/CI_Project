@@ -4,7 +4,7 @@ from math import ceil
 from cell import CellType, RoadDir
 from view.fps_counter import FPSCounter
 from view.road_sprite import RoadSprite
-
+import view.locations as loc
 
 class Drawer:
 
@@ -31,32 +31,36 @@ class Drawer:
         size_x = ceil((self.w - self.margin * 2) / self.city.grid.cols)
         size_y = ceil((self.h - self.margin * 2) / self.city.grid.rows)
 
+        images = {
+            loc.ROAD_UP:    pygame.image.load(loc.ROAD_UP).convert(),
+            loc.ROAD_DOWN:  pygame.image.load(loc.ROAD_DOWN).convert(),
+            loc.ROAD_LEFT:  pygame.image.load(loc.ROAD_LEFT).convert(),
+            loc.ROAD_RIGHT: pygame.image.load(loc.ROAD_RIGHT).convert(),
+            loc.ROAD_CROSS: pygame.image.load(loc.ROAD_CROSS).convert(),
+        }
+
         for row in range(0, self.city.grid.rows):
             for col in range(0, self.city.grid.cols):
                 x = self.margin + col * size_x
                 y = self.margin + row * size_y
-                color = (0, 0, 0)
+
                 cell = self.city.grid.get(row, col)
                 if cell.type == CellType.Road:
+                    image = None
                     if RoadDir.Up in cell.direction and RoadDir.Left in cell.direction:
-                        color = (255, 0, 255)
+                        image = images[loc.ROAD_CROSS]
                     elif RoadDir.Up in cell.direction and RoadDir.Right in cell.direction:
-                        color = (0, 0, 255)
+                        image = images[loc.ROAD_CROSS]
                     elif RoadDir.Down in cell.direction and RoadDir.Left in cell.direction:
-                        color = (0, 255, 0)
+                        image = images[loc.ROAD_CROSS]
                     elif RoadDir.Down in cell.direction and RoadDir.Right in cell.direction:
-                        color = (255, 0, 0)
-                    elif RoadDir.Up in cell.direction:
-                        color = (150, 150, 150)
-                    elif RoadDir.Down in cell.direction:
-                        color = (200, 200, 200)
-                    elif RoadDir.Left in cell.direction:
-                        color = (100, 100, 100)
-                    elif RoadDir.Right in cell.direction:
-                        color = (0, 0, 0)
-                    elif RoadDir.Unknown in cell.direction:
-                        color = (80, 80, 80)
-                    self.road_group.add(RoadSprite(color, size_x, size_y, x, y))
+                        image = images[loc.ROAD_CROSS]
+                    elif RoadDir.Up      in cell.direction: image = images[loc.ROAD_UP]
+                    elif RoadDir.Down    in cell.direction: image = images[loc.ROAD_DOWN]
+                    elif RoadDir.Left    in cell.direction: image = images[loc.ROAD_LEFT]
+                    elif RoadDir.Right   in cell.direction: image = images[loc.ROAD_RIGHT]
+
+                    self.road_group.add(RoadSprite(image, size_x, size_y, x, y))
 
     def run(self):
         self.running = True
