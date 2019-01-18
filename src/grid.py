@@ -105,7 +105,7 @@ class Grid:
 
         self.__subdivide_grid()
         self.__setup_directions()
-        self.__setup_next()
+        self.__setup_children()
         self.__cover_cells(cellToCover=CellType.Road, cellClass=CellSidewalk)
         self.__cover_cells(cellToCover=CellType.Sidewalk, cellClass=CellBuilding)
         return True
@@ -133,7 +133,7 @@ class Grid:
                             self.__cells[i][j-1] = cellClass(i, j)
                             
 
-    def __setup_next(self):
+    def __setup_children(self):
         for i in range(self.rows):
             for j in range(self.cols):
                 cell = self.__cells[i][j]
@@ -145,6 +145,34 @@ class Grid:
             for j in range(self.cols):
                 cell = self.__cells[i][j]
                 if cell.type == CellType.Road:
+
+                    # For intersections only
+                    if len(cell.orientation) > 1:
+                        # Always check two roads ahead, because the nearest may also be an intersection
+                        # If there is a road below and it is not pointing upwards:
+                        if (i + 2) < self.rows:
+                            child = self.__cells[i + 2][j]
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Up not in child.direction):
+                                cell.addChild(self.__cells[i + 1][j])
+
+                        # If there is a road above and it is not pointing downwards:
+                        if (i - 2) >= 0:
+                            child = self.__cells[i - 2][j]
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Down not in child.direction):
+                                cell.addChild(self.__cells[i - 1][j])
+
+                        # If there is a road right and it is not pointing left:
+                        if (j + 2) < self.cols:
+                            child = self.__cells[i][j + 2]
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Left not in child.direction):
+                                cell.addChild(self.__cells[i][j + 1])
+
+                        # If there is a road left and it is not pointing right:
+                        if (j - 2) >= 0:
+                            child = self.__cells[i][j - 2]
+                            if child.type == CellType.Road and (len(child.orientation) > 1 or RoadDir.Right not in child.direction):
+                                cell.addChild(self.__cells[i][j - 1])
+
                     if RoadDir.Up    in cell.direction and (i - 1) >= 0:        cell.addChild(self.__cells[i - 1][j])
                     if RoadDir.Down  in cell.direction and (i + 1) < self.rows: cell.addChild(self.__cells[i + 1][j])
                     if RoadDir.Left  in cell.direction and (j - 1) >= 0:        cell.addChild(self.__cells[i][j - 1])
@@ -180,7 +208,6 @@ class Grid:
                 i += 1
 
         # Intersections
-        print(self.intersections)
         for intersection in self.intersections:
             cell = self.__cells[intersection[0]][intersection[1]]
             cell.orientation = [Orientation.Vertical, Orientation.Horizontal]
@@ -193,7 +220,6 @@ class Grid:
             neighbours = self.__get_road_neighbours(x, y)
             singles = self.__get_single_orientation(neighbours)
             cell.direction = [single.direction[0] for single in singles]
-            print(x, y, len(neighbours), len(singles), cell.direction)
 
 
     def __get_single_orientation(self, cells):
@@ -213,7 +239,6 @@ class Grid:
                 if (i == 0 or j == 0) and not (i == 0 and j == 0) and xx > 0 and yy > 0 and xx < self.rows and yy < self.cols:
                     cell = self.__cells[xx][yy]
                     if cell.type == CellType.Road:
-                        print(xx, yy, cell.orientation)
                         neighbours.append(cell)
         return neighbours
 

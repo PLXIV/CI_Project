@@ -32,13 +32,17 @@ class Drawer:
         size_y = ceil((self.h - self.margin * 2) / self.city.grid.rows)
 
         images = {
-            loc.ROAD_UP:    pygame.image.load(loc.ROAD_UP).convert(),
-            loc.ROAD_DOWN:  pygame.image.load(loc.ROAD_DOWN).convert(),
-            loc.ROAD_LEFT:  pygame.image.load(loc.ROAD_LEFT).convert(),
-            loc.ROAD_RIGHT: pygame.image.load(loc.ROAD_RIGHT).convert(),
-            loc.ROAD_CROSS: pygame.image.load(loc.ROAD_CROSS).convert(),
-            loc.SIDEWALK:   pygame.image.load(loc.SIDEWALK).convert(),
-            loc.HOUSE: pygame.image.load(loc.HOUSE).convert()
+            loc.ROAD_UP:      pygame.image.load(loc.ROAD_UP).convert(),
+            loc.ROAD_DOWN:    pygame.image.load(loc.ROAD_DOWN).convert(),
+            loc.ROAD_LEFT:    pygame.image.load(loc.ROAD_LEFT).convert(),
+            loc.ROAD_RIGHT:   pygame.image.load(loc.ROAD_RIGHT).convert(),
+            loc.ROAD_CROSS:   pygame.image.load(loc.ROAD_CROSS).convert(),
+            loc.SIDEWALK:     pygame.image.load(loc.SIDEWALK).convert(),
+            loc.HOUSE:        pygame.image.load(loc.HOUSE).convert(),
+            loc.ROAD_T_DOWN:  pygame.image.load(loc.ROAD_T_DOWN).convert(),
+            loc.ROAD_T_UP:    pygame.image.load(loc.ROAD_T_UP).convert(),
+            loc.ROAD_T_LEFT:  pygame.image.load(loc.ROAD_T_LEFT).convert(),
+            loc.ROAD_T_RIGHT: pygame.image.load(loc.ROAD_T_RIGHT).convert(),
         }
 
         for row in range(0, self.city.grid.rows):
@@ -58,18 +62,22 @@ class Drawer:
 
                 if cell.type == CellType.Road:
                     image = None
-                    if RoadDir.Up in cell.direction and RoadDir.Left in cell.direction:
+                    active_sides = cell.active_sides()
+
+                    if len(active_sides) == 4:
                         image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Up in cell.direction and RoadDir.Right in cell.direction:
-                        image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Down in cell.direction and RoadDir.Left in cell.direction:
-                        image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Down in cell.direction and RoadDir.Right in cell.direction:
-                        image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Up      in cell.direction: image = images[loc.ROAD_UP]
-                    elif RoadDir.Down    in cell.direction: image = images[loc.ROAD_DOWN]
-                    elif RoadDir.Left    in cell.direction: image = images[loc.ROAD_LEFT]
-                    elif RoadDir.Right   in cell.direction: image = images[loc.ROAD_RIGHT]
+
+                    elif len(active_sides) == 3:
+                        if   RoadDir.Up    not in active_sides: image = images[loc.ROAD_T_UP]
+                        elif RoadDir.Down  not in active_sides: image = images[loc.ROAD_T_DOWN]
+                        elif RoadDir.Left  not in active_sides: image = images[loc.ROAD_T_LEFT]
+                        elif RoadDir.Right not in active_sides: image = images[loc.ROAD_T_RIGHT]
+
+                    else:
+                        if   RoadDir.Up    in cell.direction: image = images[loc.ROAD_UP]
+                        elif RoadDir.Down  in cell.direction: image = images[loc.ROAD_DOWN]
+                        elif RoadDir.Left  in cell.direction: image = images[loc.ROAD_LEFT]
+                        elif RoadDir.Right in cell.direction: image = images[loc.ROAD_RIGHT]
 
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
@@ -81,7 +89,7 @@ class Drawer:
             self.__events()
             pygame.display.update()
             # Frames
-            print('\rFPS: {:.1f}  '.format(self.fps_counter.tick()), end='')
+            print('\rFPS: {:.1f}  '.format(self.fps_counter.tick()) + " " + str(self.running), end='')
             self.clock.tick(self.fps_target)
 
     def __events(self):
