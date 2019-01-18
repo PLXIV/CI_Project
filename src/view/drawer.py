@@ -5,6 +5,7 @@ from cell import CellType, RoadDir
 from view.fps_counter import FPSCounter
 from view.cell_sprite import CellSprite
 import view.locations as loc
+from random import choice
 
 class Drawer:
 
@@ -38,7 +39,9 @@ class Drawer:
             loc.ROAD_RIGHT: pygame.image.load(loc.ROAD_RIGHT).convert(),
             loc.ROAD_CROSS: pygame.image.load(loc.ROAD_CROSS).convert(),
             loc.SIDEWALK:   pygame.image.load(loc.SIDEWALK).convert(),
-            loc.HOUSE: pygame.image.load(loc.HOUSE).convert()
+            loc.HOUSE: pygame.image.load(loc.HOUSE).convert(),
+            loc.HOUSE_2: pygame.image.load(loc.HOUSE_2).convert(),
+            loc.HOUSE_3: pygame.image.load(loc.HOUSE_3).convert(),
         }
 
         for row in range(0, self.city.grid.rows):
@@ -53,7 +56,8 @@ class Drawer:
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
                 if cell.type == CellType.Building:
-                    image = images[loc.HOUSE]
+                    house_array = [loc.HOUSE,loc.HOUSE_3]
+                    image = images[choice(house_array)]
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
                 if cell.type == CellType.Road:
