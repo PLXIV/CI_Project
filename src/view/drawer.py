@@ -1,11 +1,12 @@
 import pygame
 from pygame.time import Clock
-from math import ceil
+from math import ceil, floor
 from cell import CellType, Direction
 from view.fps_counter import FPSCounter
 from view.cell_sprite import CellSprite
 import view.locations as loc
 from random import choice
+
 
 class Drawer:
 
@@ -20,17 +21,30 @@ class Drawer:
         self.city = city
         self.fps_target = fps_target
         self.fps_counter = FPSCounter()
-        self.screen = pygame.display.set_mode((self.w, self.h))
+        self.screen = pygame.display.set_mode((self.w, self.h),  pygame.RESIZABLE)
         self.running = False
         self.cell_group = None
 
-        self.__gen_road_groups()
+        self.__gen_road_sprites()
 
-    def __gen_road_groups(self):
+    def __sprite_size(self):
+        return ceil((min(self.w, self.h) - self.margin * 2) / self.city.grid.cols)
+
+    def __resize_sprites(self):
+        size = self.__sprite_size()
+        margin_w = floor((self.w - size * self.city.grid.cols) / 2)
+        margin_h = floor((self.h - size * self.city.grid.rows) / 2)
+
+        for sprite in self.cell_group:
+            x = margin_w + self.margin + sprite.col * size
+            y = margin_h + self.margin + sprite.row * size
+            sprite.resize(size, x, y)
+
+    def __gen_road_sprites(self):
         self.cell_group = pygame.sprite.Group()
-
-        size_x = ceil((self.w - self.margin * 2) / self.city.grid.cols)
-        size_y = ceil((self.h - self.margin * 2) / self.city.grid.rows)
+        size = self.__sprite_size()
+        margin_w = floor((self.w - size * self.city.grid.cols) / 2)
+        margin_h = floor((self.h - size * self.city.grid.rows) / 2)
 
         images = {
             loc.ROAD_UP:      pygame.image.load(loc.ROAD_UP).convert(),
@@ -55,22 +69,19 @@ class Drawer:
 
         for row in range(0, self.city.grid.rows):
             for col in range(0, self.city.grid.cols):
-                x = self.margin + col * size_x
-                y = self.margin + row * size_y
-
+                x = margin_h + self.margin + col * size
+                y = margin_w + self.margin + row * size
                 cell = self.city.grid.get(row, col)
+                image = None
                 
                 if cell.type == CellType.Sidewalk:
                     image = images[loc.SIDEWALK]
-                    self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
                 if cell.type == CellType.Building:
                     house_array = [loc.HOUSE_1, loc.HOUSE_3, loc.HOUSE_4, loc.HOUSE_5, loc.HOUSE_6]
                     image = images[choice(house_array)]
-                    self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
                 if cell.type == CellType.Road:
-                    image = None
                     active_sides = cell.active_sides()
 
                     if len(active_sides) == 4:
@@ -94,7 +105,8 @@ class Drawer:
                         elif Direction.Left  in cell.direction: image = images[loc.ROAD_LEFT]
                         elif Direction.Right in cell.direction: image = images[loc.ROAD_RIGHT]
 
-                    self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
+                if cell.type != CellType.Empty:
+                    self.cell_group.add(CellSprite(image, size, x, y, row, col))
 
     def run(self):
         self.running = True
@@ -103,14 +115,20 @@ class Drawer:
             self.__step()
             self.__events()
             pygame.display.update()
-            # Frames
             print('\rFPS: {:.1f}  '.format(self.fps_counter.tick()), end='')
             self.clock.tick(self.fps_target)
+
+        pygame.quit()
 
     def __events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == pygame.VIDEORESIZE:
+                self.w = event.w
+                self.h = event.h
+                self.screen = pygame.display.set_mode((self.w, self.h), pygame.RESIZABLE)
+                self.__resize_sprites()
 
     def __step(self):
         self.screen.fill((255, 255, 255))
