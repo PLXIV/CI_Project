@@ -59,13 +59,13 @@ class CellRoad(Cell):
 
 class CellBuilding(Cell):
 
-    def __init__(self, row=0, col=0):
+    def __init__(self, row, col):
         super().__init__(CellType.Building, row, col)
 
 
 class CellSidewalk(Cell):
 
-    def __init__(self, row=0, col=0):
+    def __init__(self, row, col):
         super().__init__(CellType.Sidewalk, row, col)
 
 

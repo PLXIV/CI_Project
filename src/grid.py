@@ -106,54 +106,31 @@ class Grid:
         self.__subdivide_grid()
         self.__setup_directions()
         self.__setup_next()
-        self.__generate_sidewalks()
-        self.__generate_buildings()
+        self.__cover_cells(cellToCover=CellType.Road, cellClass=CellSidewalk)
+        self.__cover_cells(cellToCover=CellType.Sidewalk, cellClass=CellBuilding)
         return True
 
-    def __generate_buildings(self):
+    def __cover_cells(self, cellToCover, cellClass):
         for i in range(self.rows):
             for j in range(self.cols):
                 cell = self.__cells[i][j]
-                if cell.type == CellType.Sidewalk:
-                    #Check if above the Sidewalk is empty, if it is insert a Sidewalk
+                if cell.type == cellToCover:
+                    # Check if above the road is empty, if it is insert a Sidewalk
                     if i != self.rows - 1:
                         if self.__cells[i+1][j].type == CellType.Empty:
-                            self.__cells[i+1][j] = CellBuilding()
-                    #Check if below the Sidewalk is empty, if it is insert a Sidewalk
-                    if i != 0:
-                        if self.__cells[i-1][j].type == CellType.Empty:
-                            self.__cells[i-1][j] = CellBuilding()
-                    #Check if the right position the Sidewalk is empty, if it is insert a Sidewalk
-                    if j != self.cols - 1:
-                        if self.__cells[i][j+1].type == CellType.Empty:
-                            self.__cells[i][j+1] = CellBuilding()
-                    #Check if the left position the Sidewalk is empty, if it is insert a Sidewalk
-                    if j != 0:
-                        if self.__cells[i][j-1].type == CellType.Empty:
-                            self.__cells[i][j-1] = CellBuilding()  
-                            
-
-    def __generate_sidewalks(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                cell = self.__cells[i][j]
-                if cell.type == CellType.Road:
-                    #Check if above the road is empty, if it is insert a Sidewalk
-                    if i != self.rows - 1:
-                        if self.__cells[i+1][j].type == CellType.Empty:
-                            self.__cells[i+1][j] = CellSidewalk()
+                            self.__cells[i+1][j] = cellClass(i, j)
                     #Check if below the road is empty, if it is insert a Sidewalk
                     if i != 0:
                         if self.__cells[i-1][j].type == CellType.Empty:
-                            self.__cells[i-1][j] = CellSidewalk()
+                            self.__cells[i-1][j] = cellClass(i, j)
                     #Check if the right position the road is empty, if it is insert a Sidewalk
                     if j != self.cols - 1:
                         if self.__cells[i][j+1].type == CellType.Empty:
-                            self.__cells[i][j+1] = CellSidewalk()
+                            self.__cells[i][j+1] = cellClass(i, j)
                     #Check if the left position the road is empty, if it is insert a Sidewalk
                     if j != 0:
                         if self.__cells[i][j-1].type == CellType.Empty:
-                            self.__cells[i][j-1] = CellSidewalk()
+                            self.__cells[i][j-1] = cellClass(i, j)
                             
 
     def __setup_next(self):
