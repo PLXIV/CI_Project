@@ -48,8 +48,8 @@ def search_bfs(grid, start_p, final_p):
 if __name__ == "__main__":
 
     # City
-    city = City(rows=20, cols=20, n_intersections=5)
-    city.grid.generate(seed=120)
+    city = City(rows=12, cols=12, n_intersections=1)
+    city.grid.generate()
     #print(city.grid)
     #print(city.grid.intersections)
     start_p = city.grid.get(1,12)
@@ -57,11 +57,9 @@ if __name__ == "__main__":
     
     path, current_node =search_bfs(city.grid, start_p, final_p)
     
-    # Window
-#    drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)
-#    drawer.run()
-#    t = threading.Thread(target=drawer.run, args=[])
-#    t.start()
+    drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)
+    drawer.run()
+    #t = threading.Thread(target=drawer.run, args=[])
+    #t.start()
 
-#    t.join()
-     
+    #t.join()

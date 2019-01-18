@@ -14,12 +14,17 @@ class CellType(Enum):
     Empty = 4
 
 
-class RoadDir(Enum):
+class Direction(Enum):
     Up = 1
     Down = 2
     Left = 3
     Right = 4
     Unknown = 5
+
+
+class Lights(Enum):
+    CARS_RED = 1
+    CARS_GREEN = 2
 
 
 class Cell:
@@ -35,27 +40,47 @@ class Cell:
         else:
             return "□"
 
+    def __repr__(self):
+        return '({:d},{:d})'.format(self.row, self.col)
 
 class CellRoad(Cell):
 
     def __init__(self, row, col):
         super().__init__(CellType.Road, row, col)
-        self.direction = [RoadDir.Unknown]
+        self.direction = [Direction.Unknown]
         self.orientation = [Orientation.Unknown]
         self.children = []
         self.parents = []
+        self.hasCrosswalk = False
+        self.hasLights = False
+        self.lights = Lights.CARS_GREEN
 
     def addChild(self, child):
-        self.children.append(child)
-        child.parents.append(self)
+        if child not in self.children:
+            self.children.append(child)
+            child.parents.append(self)
 
     def duplicate(self):
-        dupli = CellRoad(self.row, self.col)
-        dupli.direction = self.direction.copy()
-        dupli.orientation = self.orientation.copy()
-        dupli.children = self.children.copy()
-        dupli.parents = self.parents.copy()
-        return dupli
+        duplicated = CellRoad(self.row, self.col)
+        duplicated.direction = self.direction.copy()
+        duplicated.orientation = self.orientation.copy()
+        duplicated.children = self.children.copy()
+        duplicated.parents = self.parents.copy()
+        return duplicated
+
+    def active_sides(self):
+        active = []
+        for element_list in [self.children, self.parents]:
+            for element in element_list:
+                if element.row == self.row + 1:
+                    active.append(Direction.Down)
+                elif element.row == self.row - 1:
+                    active.append(Direction.Up)
+                elif element.col == self.col + 1:
+                    active.append(Direction.Right)
+                elif element.col == self.col - 1:
+                    active.append(Direction.Left)
+        return active
 
 class CellBuilding(Cell):
 
@@ -67,6 +92,13 @@ class CellSidewalk(Cell):
 
     def __init__(self, row, col):
         super().__init__(CellType.Sidewalk, row, col)
+        self.children = []
+        self.parents = []
+
+    def addChild(self, child):
+        if child not in self.children:
+            self.children.append(child)
+            child.parents.append(self)
 
 
 class CellEmpty(Cell):

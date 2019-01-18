@@ -1,10 +1,11 @@
 import pygame
 from pygame.time import Clock
 from math import ceil
-from cell import CellType, RoadDir
+from cell import CellType, Direction
 from view.fps_counter import FPSCounter
 from view.cell_sprite import CellSprite
 import view.locations as loc
+from random import choice
 
 class Drawer:
 
@@ -32,13 +33,21 @@ class Drawer:
         size_y = ceil((self.h - self.margin * 2) / self.city.grid.rows)
 
         images = {
-            loc.ROAD_UP:    pygame.image.load(loc.ROAD_UP).convert(),
-            loc.ROAD_DOWN:  pygame.image.load(loc.ROAD_DOWN).convert(),
-            loc.ROAD_LEFT:  pygame.image.load(loc.ROAD_LEFT).convert(),
-            loc.ROAD_RIGHT: pygame.image.load(loc.ROAD_RIGHT).convert(),
-            loc.ROAD_CROSS: pygame.image.load(loc.ROAD_CROSS).convert(),
-            loc.SIDEWALK:   pygame.image.load(loc.SIDEWALK).convert(),
-            loc.HOUSE: pygame.image.load(loc.HOUSE).convert()
+            loc.ROAD_UP:      pygame.image.load(loc.ROAD_UP).convert(),
+            loc.ROAD_DOWN:    pygame.image.load(loc.ROAD_DOWN).convert(),
+            loc.ROAD_LEFT:    pygame.image.load(loc.ROAD_LEFT).convert(),
+            loc.ROAD_RIGHT:   pygame.image.load(loc.ROAD_RIGHT).convert(),
+            loc.ROAD_CROSS:   pygame.image.load(loc.ROAD_CROSS).convert(),
+            loc.SIDEWALK:     pygame.image.load(loc.SIDEWALK).convert(),
+            loc.HOUSE_1:      pygame.image.load(loc.HOUSE_1).convert(),
+            loc.HOUSE_2:      pygame.image.load(loc.HOUSE_2).convert(),
+            loc.HOUSE_3:      pygame.image.load(loc.HOUSE_3).convert(),
+            loc.ROAD_T_DOWN:  pygame.image.load(loc.ROAD_T_DOWN).convert(),
+            loc.ROAD_T_UP:    pygame.image.load(loc.ROAD_T_UP).convert(),
+            loc.ROAD_T_LEFT:  pygame.image.load(loc.ROAD_T_LEFT).convert(),
+            loc.ROAD_T_RIGHT: pygame.image.load(loc.ROAD_T_RIGHT).convert(),
+            loc.ROAD_CROSSWALK_H: pygame.image.load(loc.ROAD_CROSSWALK_H).convert(),
+            loc.ROAD_CROSSWALK_V: pygame.image.load(loc.ROAD_CROSSWALK_V).convert(),
         }
 
         for row in range(0, self.city.grid.rows):
@@ -53,23 +62,34 @@ class Drawer:
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
                 if cell.type == CellType.Building:
-                    image = images[loc.HOUSE]
+                    house_array = [loc.HOUSE_1, loc.HOUSE_3]
+                    image = images[choice(house_array)]
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
                 if cell.type == CellType.Road:
                     image = None
-                    if RoadDir.Up in cell.direction and RoadDir.Left in cell.direction:
+                    active_sides = cell.active_sides()
+
+                    if len(active_sides) == 4:
                         image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Up in cell.direction and RoadDir.Right in cell.direction:
-                        image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Down in cell.direction and RoadDir.Left in cell.direction:
-                        image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Down in cell.direction and RoadDir.Right in cell.direction:
-                        image = images[loc.ROAD_CROSS]
-                    elif RoadDir.Up      in cell.direction: image = images[loc.ROAD_UP]
-                    elif RoadDir.Down    in cell.direction: image = images[loc.ROAD_DOWN]
-                    elif RoadDir.Left    in cell.direction: image = images[loc.ROAD_LEFT]
-                    elif RoadDir.Right   in cell.direction: image = images[loc.ROAD_RIGHT]
+
+                    elif len(active_sides) == 3:
+                        if   Direction.Up    not in active_sides: image = images[loc.ROAD_T_UP]
+                        elif Direction.Down  not in active_sides: image = images[loc.ROAD_T_DOWN]
+                        elif Direction.Left  not in active_sides: image = images[loc.ROAD_T_LEFT]
+                        elif Direction.Right not in active_sides: image = images[loc.ROAD_T_RIGHT]
+
+                    elif cell.hasCrosswalk:
+                        if   Direction.Up    in cell.direction: image = images[loc.ROAD_CROSSWALK_V]
+                        elif Direction.Down  in cell.direction: image = images[loc.ROAD_CROSSWALK_V]
+                        elif Direction.Left  in cell.direction: image = images[loc.ROAD_CROSSWALK_H]
+                        elif Direction.Right in cell.direction: image = images[loc.ROAD_CROSSWALK_H]
+
+                    else:
+                        if   Direction.Up    in cell.direction: image = images[loc.ROAD_UP]
+                        elif Direction.Down  in cell.direction: image = images[loc.ROAD_DOWN]
+                        elif Direction.Left  in cell.direction: image = images[loc.ROAD_LEFT]
+                        elif Direction.Right in cell.direction: image = images[loc.ROAD_RIGHT]
 
                     self.cell_group.add(CellSprite(image, size_x, size_y, x, y))
 
