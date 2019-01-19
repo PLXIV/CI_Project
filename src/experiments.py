@@ -8,9 +8,8 @@ sns.set()
 from time import time, sleep
 from datetime import timedelta
 
-def run_all_green(city):
-    steps_simulation = 200
-    n_simulations = 50
+def run_all_green(city,steps_simulation,n_simulations):
+
     average_fitness = []
     number_of_lights = len(city.grid.roads_with_lights)
     all_fitness = []
@@ -31,13 +30,12 @@ def run_all_green(city):
     print('ended simulation')
 
 
-def run_all_random(city):
-    steps_simulation = 200
-    n_simulations = 50
+def run_all_random(city,steps_simulation,n_simulations):
     average_fitness = []
     number_of_lights = len(city.grid.roads_with_lights)
     all_fitness = []
     for single_simulation in range(n_simulations):
+        print('Simulation:', single_simulation)
         for i in range(steps_simulation):
             lights = [choice([True, False]) for i in range(number_of_lights)]
             city.step(lights)
@@ -66,10 +64,9 @@ if __name__ == "__main__":
 
     # Sim parameters
     max_sim_steps = 200
-    max_generations = 40
     num_sim = 5
 
     city = City(rows, cols, n_intersections, seed)
 
     # Run
-    best_performance, best_gene = run_all_random
+    run_all_random(city, max_sim_steps,num_sim)
