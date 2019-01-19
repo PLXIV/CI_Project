@@ -59,16 +59,17 @@ def run_all_genetic(city,steps_simulation,n_simulations):
     print('begin genetics')
     average_fitness = []
     all_fitness = []
-    best_individual = np.load('../data/best_4_generations.npy')
+    best_individual = np.load('../data/best_500_generations.npy')
     lights_gene = np.reshape(best_individual, [len(city.grid.roads_with_lights), max_sim_steps]).T
 
     for single_simulation in range(n_simulations):
-        print('Simulation:', single_simulation)
+
         for i in range(steps_simulation):
             lights = lights_gene[i, :]
             city.step(lights)
             # sleep(0.1)
         fitness = city.cars_despawned
+        print('Simulation:', single_simulation, 'fitness:',fitness)
         average_fitness.append(fitness)
         city.clean()
         all_fitness.append(fitness)
@@ -97,7 +98,7 @@ if __name__ == "__main__":
     city = City(rows, cols, n_intersections, seed)
 
     # Run
-    #run_all_genetic(city,max_sim_steps,num_sim)
+    run_all_genetic(city,max_sim_steps,num_sim)
     city.clean()
     run_all_random(city, max_sim_steps,num_sim)
     city.clean()

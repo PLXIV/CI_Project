@@ -30,6 +30,8 @@ def run_genetics(rows, cols, n_intersections, seed, max_generations=40, max_sim_
     best_gene = []
     best_performance = 0
     for generation in range(max_generations):
+        if population.convergence_criteria():
+            break
         init = time()
         print('Step:', generation, end=' ')
         args = generate_args(cities, number_of_lights, population, num_sim, max_sim_steps)
@@ -45,6 +47,8 @@ def run_genetics(rows, cols, n_intersections, seed, max_generations=40, max_sim_
 
         best_performance, best_gene, pop_size = population.update_genes()
         print('| New pop size:', pop_size, '| Best fitness:', best_performance, '| Took', timedelta(seconds=(time() - init)), '| Best gene:', best_gene)
+    best_performance = population.best_historical_performance
+    best_gene = population.best_historical_individual
     return best_performance, best_gene
 
 
