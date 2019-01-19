@@ -39,7 +39,6 @@ def search_bfs(grid, start_p, final_p):
             previous = current_node
             current_node = dict_path[current_node]
             path.append(current_node)   
-        
          
     return path, previous
         
@@ -53,15 +52,31 @@ def generate_bfs_dictionaries(grid):
     max_roads = len(all_roads)
     print('Calculating BFS: 0 of {:d}'.format(max_roads), end='')
 
+    all_destinations = {}
+    for current_road in all_roads:
+        all_destinations[current_road] = {}
+        
     for i, current_road in enumerate(all_roads):
-        print('\rCalculating BFS: {:d} of {:d}'.format(i, max_roads), end='    ')
-
-        destinations = {}
+        if i % 2 == 0 or i == 0 or i == max_roads:
+            print('\rCalculating BFS: {:d} of {:d}'.format(i, max_roads), end='    ')
+        
+        done = 0
         for posible_destination in all_roads:
             if current_road != posible_destination:
-                _, previous = search_bfs(grid, current_road, posible_destination)
-                destinations[posible_destination] = previous
+                if not posible_destination in all_destinations[current_road].keys():
+                    done +=1
+                    path, previous = search_bfs(grid, current_road, posible_destination)
+                    all_destinations[current_road][posible_destination] = previous
+                    if path:
+                        for node in range(len(path)-1,0,-1):
+                            for next_node in range(len(path)-2,-1,-1):
+                                if not path[next_node] in all_destinations[path[node]].keys():
+                                    all_destinations[path[node]][path[next_node]] = path[next_node -1]
             else:
-                destinations[posible_destination] = None
-        
-        current_road.destinations = destinations
+                all_destinations[current_road][posible_destination] = None
+    
+    for current_road in all_roads:     
+        current_road.destinations = all_destinations[current_road]
+        if len(all_roads) != len(current_road.destinations.keys()):
+            print(len(current_road.destinations.keys()))
+    print(len(all_roads))
