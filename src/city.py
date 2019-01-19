@@ -1,10 +1,6 @@
 from grid import Grid
 from car import Car
-from cell import Lights
-
-from cell import Lights, CellType
-import random as rnd
-
+import copy
 from cell import Lights, CellType
 import random as rnd
 
@@ -19,13 +15,20 @@ class City:
         self.cars_spawned = 0
         self.onNewCar = None
         self.onDelCar = None
+        
+    def clone(self):
+        cloned = City(self.grid.rows, self.grid.cols, self.grid.n_intersections)
+        cloned.grid = copy.deepcopy(self.grid)
+        return cloned
+
 
     def clean(self):
         self.cars_despawned = 0
         self.cars_spawned = 0
         for car in self.cars:
             car.cell.car = None
-            self.onDelCar(car)
+            if self.onDelCar is not None:
+                self.onDelCar(car)
         self.cars = []
 
     def get(self, row, col):
