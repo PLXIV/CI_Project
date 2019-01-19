@@ -151,10 +151,10 @@ class Grid:
                     singles = self.__get_single_orientation(neighbours)
                     cell.hasCrosswalk = len(neighbours) > len(singles)
                     # cell.hasLights = len(neighbours) > len(singles)
-                    cell.hasLights = 0
+                    cell.hasLights = False
                     for child in cell.children:
                         if len(child.orientation) > 1:
-                            cell.hasLights = 1
+                            cell.hasLights = True
 
 
     def __cover_cells(self, cellToCover, cellClass):

@@ -1,5 +1,5 @@
 import random as rnd
-
+from cell import Lights
 
 class Car:
 
@@ -15,7 +15,7 @@ class Car:
     def move(self):
         next_cell = self.getNextCell()
 
-        if next_cell.car is None:
+        if next_cell.car is None and (not next_cell.hasLights or next_cell.lights == Lights.CARS_GREEN):
             self.cell.car = None
             self.cell = next_cell
             self.cell.car = self
