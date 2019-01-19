@@ -20,6 +20,7 @@ class Grid:
         self.spawn_roads = []
         self.despawn_roads = []
         self.destinations = {}
+        self.roads_with_lights = []
 
     # Get a Cell from the grid
     def get(self, row, col):
@@ -155,6 +156,8 @@ class Grid:
                     for child in cell.children:
                         if len(child.orientation) > 1:
                             cell.hasLights = True
+                            self.roads_with_lights.append(cell)
+
 
 
     def __cover_cells(self, cellToCover, cellClass):

@@ -2,11 +2,19 @@ from city import City
 from view.drawer import Drawer
 import threading
 from time import sleep
+from random import choice
 
-def run_city(city):
-    for i in range(10000):
-        city.step()
-        sleep(0.5)
+def run_genetics(city):
+    number_of_lights = len(city.grid.roads_with_lights)
+
+    for i in range(1000):
+        print(i)
+        lights = [choice([True, False]) for i in range(number_of_lights)]
+        city.step(lights)
+        sleep(0.1)
+    finess = city.cars_despawned
+    print('fitness:',finess)
+
 
 if __name__ == "__main__":
 
@@ -14,11 +22,16 @@ if __name__ == "__main__":
     city = City(rows=20, cols=20, n_intersections=4)
     city.grid.generate(seed=27367)
 
+
+
     # Graphics
     drawer = Drawer(fps_target=120, city=city, width=800, height=800, margin=0)
 
     # Run
-    t = threading.Thread(target=run_city, args=[city])
+    t = threading.Thread(target=run_genetics, args=[city])
     t.start()
     drawer.run()
     t.join()
+
+
+

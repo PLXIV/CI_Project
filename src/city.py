@@ -1,5 +1,6 @@
 from grid import Grid
 from car import Car
+from cell import Lights
 
 class City:
     MAX_CARS = 20
@@ -16,10 +17,11 @@ class City:
     def get(self, row, col):
         return self.grid.get(row, col)
 
-    def step(self):
+    def step(self, light_values):
         self.__despawn_cars()
         self.__move_cars()
-
+        for i, cell in enumerate(self.grid.roads_with_lights):
+            cell.lights = Lights.CARS_GREEN if light_values[i] else Lights.CARS_RED
         i = 0
         while len(self.cars) < City.MAX_CARS and i < City.MAX_SPAWN_PER_STEP:
             self.__spawn_car()
