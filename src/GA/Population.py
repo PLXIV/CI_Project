@@ -44,6 +44,7 @@ class Population(object):
         self.new_generation()
         return [best_performance, best_gene]
 
+
     def get_scores(self):
         return np.array([g.score for g in self.genes])
 
@@ -102,7 +103,6 @@ class Population(object):
             cuts = random.sample(range(1, self.dna_size - 1), self.crossover_points)
             cuts.sort()
             cut_index = 0
-            cuts = [2, 4, 6]
             newGen1 = []
             newGen2 = []
             for j in range(self.dna_size):
