@@ -54,8 +54,7 @@ def generate_bfs_dictionaries(grid):
     print('Calculating BFS: 0 of {:d}'.format(max_roads), end='')
 
     for i, current_road in enumerate(all_roads):
-        if i % 2 == 0 or i == 0 or i == max_roads:
-            print('\rCalculating BFS: {:d} of {:d}'.format(i, max_roads), end='    ')
+        print('\rCalculating BFS: {:d} of {:d}'.format(i, max_roads), end='    ')
 
         destinations = {}
         for posible_destination in all_roads:
