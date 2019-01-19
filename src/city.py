@@ -2,6 +2,9 @@ from grid import Grid
 from car import Car
 from cell import Lights
 
+from cell import Lights, CellType
+import random as rnd
+
 class City:
     MAX_CARS = 20
     MAX_SPAWN_PER_STEP = 3

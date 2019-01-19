@@ -8,7 +8,7 @@ def run_genetics(city):
     number_of_lights = len(city.grid.roads_with_lights)
 
     for i in range(1000):
-        print(i)
+        # print(i)
         lights = [choice([True, False]) for i in range(number_of_lights)]
         city.step(lights)
         sleep(0.1)
@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
 
     # Graphics
-    drawer = Drawer(fps_target=120, city=city, width=800, height=800, margin=0)
+    drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)
 
     # Run
     t = threading.Thread(target=run_genetics, args=[city])

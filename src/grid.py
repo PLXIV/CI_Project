@@ -150,14 +150,14 @@ class Grid:
                 if cell.type == CellType.Road:
                     neighbours = self.__get_road_neighbours(i, j)
                     singles = self.__get_single_orientation(neighbours)
-                    cell.hasCrosswalk = len(neighbours) > len(singles)
-                    # cell.hasLights = len(neighbours) > len(singles)
-                    cell.hasLights = False
-                    for child in cell.children:
-                        if len(child.orientation) > 1:
-                            cell.hasLights = True
-                            self.roads_with_lights.append(cell)
 
+                    if len(cell.children) == 1 and len(cell.parents) == 1 and (len(neighbours) > len(singles)):
+                        cell.hasCrosswalk = True
+                        # Only add lights if any children is intersection
+                        for child in cell.children:
+                            if len(child.orientation) > 1:
+                                cell.hasLights = True
+                                self.roads_with_lights.append(cell)
 
 
     def __cover_cells(self, cellToCover, cellClass):
@@ -168,19 +168,19 @@ class Grid:
                     # Check if above the road is empty, if it is insert a Sidewalk
                     if i != self.rows - 1:
                         if self.__cells[i+1][j].type == CellType.Empty:
-                            self.__cells[i+1][j] = cellClass(i, j)
+                            self.__cells[i+1][j] = cellClass(i+1, j)
                     #Check if below the road is empty, if it is insert a Sidewalk
                     if i != 0:
                         if self.__cells[i-1][j].type == CellType.Empty:
-                            self.__cells[i-1][j] = cellClass(i, j)
+                            self.__cells[i-1][j] = cellClass(i-1, j)
                     #Check if the right position the road is empty, if it is insert a Sidewalk
                     if j != self.cols - 1:
                         if self.__cells[i][j+1].type == CellType.Empty:
-                            self.__cells[i][j+1] = cellClass(i, j)
+                            self.__cells[i][j+1] = cellClass(i, j+1)
                     #Check if the left position the road is empty, if it is insert a Sidewalk
                     if j != 0:
                         if self.__cells[i][j-1].type == CellType.Empty:
-                            self.__cells[i][j-1] = cellClass(i, j)
+                            self.__cells[i][j-1] = cellClass(i, j-1)
                             
 
     def __setup_road_connections(self):
