@@ -15,24 +15,23 @@ def generate_args(cities, number_of_lights, population, n_simulations, steps_sim
         args.append([cities[i], g.gene, number_of_lights, n_simulations, steps_simulation])
     return args
 
-def run_genetics(rows, cols, n_intersections, seed):
+def run_genetics(rows, cols, n_intersections, seed, max_generations=40, max_sim_steps=200, num_sim=5):
     dummy = City(rows, cols, n_intersections, seed)
     number_of_lights = len(dummy.grid.roads_with_lights)
-    steps_generations = 40
-    steps_simulation = 200
-    n_simulations = 5
 
-    population = Population(generation_id=0, pop_size=20, dna_size=steps_simulation * number_of_lights, elitism_n=100,
+    population = Population(generation_id=0, pop_size=20, dna_size=max_sim_steps * number_of_lights, elitism_n=100,
                             truncation_percentage=0.33, cross_over_points=50,
                             crossover_probability=0.9, mutation_probability=0.005, multiprocessing=False)
 
     print('Maximum population size: ', population.max_pop_size())
     cities = [City(rows, cols, n_intersections, seed) for _ in range(population.max_pop_size())]
 
-    for generation in range(steps_generations):
+    best_gene = []
+    best_performance = 0
+    for generation in range(max_generations):
         init = time()
         print('Step:', generation, end=' ')
-        args = generate_args(cities, number_of_lights, population, n_simulations, steps_simulation)
+        args = generate_args(cities, number_of_lights, population, num_sim, max_sim_steps)
         if ENABLE_MULTIPROCESSING:
             pool = Pool(PROCESSES)
             scores = pool.starmap(run_gene, args)
@@ -45,6 +44,7 @@ def run_genetics(rows, cols, n_intersections, seed):
 
         best_performance, best_gene, pop_size = population.update_genes()
         print('| New pop size:', pop_size, '| Best fitness:', best_performance, '| Took', timedelta(seconds=(time() - init)), '| Best gene:', best_gene)
+    return best_performance, best_gene
 
 
 # city, gene, number_of_lights, n_simulations, steps_simulation

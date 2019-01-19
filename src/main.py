@@ -5,13 +5,20 @@ from datetime import timedelta
 from GA.optimize import run_genetics
 import sys
 from time import sleep
+import numpy as np
 
 if __name__ == "__main__":
     from view.drawer import Drawer
 
-def run_city(city, options):
-    while not options[0]:
-        city.step()
+def run_city(city, best_gene, max_sim_steps, options):
+    lights_gene = best_gene.gene
+    lights_gene = np.reshape(lights_gene, [len(city.grid.roads_with_lights), max_sim_steps]).T
+    i = 0
+
+    while not options[0] and i < max_sim_steps:
+        lights = lights_gene[i, :]
+        city.step(lights)
+        i += 1
         sleep(0.1)
 
 if __name__ == "__main__":
@@ -24,20 +31,24 @@ if __name__ == "__main__":
     cols = 30
     n_intersections = 15
     seed = 13011
-    options = [False] # QUIT
 
-    # Graphics
-    city = City(rows, cols, n_intersections, seed)
-    drawer = Drawer(fps_target=30, city=city, width=800, height=800, options=options)
+    # Sim parameters
+    max_sim_steps = 200
+    max_generations = 100
+    num_sim = 5
 
     # Run
-    #ga  = threading.Thread(target=run_genetics, args=[rows, cols, n_intersections, seed])
-    sim = threading.Thread(target=run_city, args=[city, options])
+    best_performance, best_gene = run_genetics(rows, cols, n_intersections, seed, max_generations, max_sim_steps, num_sim)
+    print(best_gene)
+
+    # Show best
+    options = [False] # QUIT
+    city = City(rows, cols, n_intersections, seed)
+    drawer = Drawer(fps_target=30, city=city, width=800, height=800, options=options)
+    sim = threading.Thread(target=run_city, args=[city, best_gene, max_sim_steps, options])
     sim.start()
-    #ga.start()
     drawer.run()
     sim.join()
-    #ga.join()
 
     total_time = time() - init
 
