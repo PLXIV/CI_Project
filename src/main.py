@@ -7,6 +7,8 @@ import sys
 from time import sleep
 import numpy as np
 
+GRAPHICS = True
+
 if __name__ == "__main__":
     from view.drawer import Drawer
 
@@ -34,21 +36,21 @@ if __name__ == "__main__":
 
     # Sim parameters
     max_sim_steps = 200
-    max_generations = 100
+    max_generations = 40
     num_sim = 5
 
     # Run
     best_performance, best_gene = run_genetics(rows, cols, n_intersections, seed, max_generations, max_sim_steps, num_sim)
-    print(best_gene)
 
     # Show best
-    options = [False] # QUIT
-    city = City(rows, cols, n_intersections, seed)
-    drawer = Drawer(fps_target=30, city=city, width=800, height=800, options=options)
-    sim = threading.Thread(target=run_city, args=[city, best_gene, max_sim_steps, options])
-    sim.start()
-    drawer.run()
-    sim.join()
+    if GRAPHICS:
+        options = [False] # QUIT
+        city = City(rows, cols, n_intersections, seed)
+        drawer = Drawer(fps_target=30, city=city, width=800, height=800, options=options)
+        sim = threading.Thread(target=run_city, args=[city, best_gene, max_sim_steps, options])
+        sim.start()
+        drawer.run()
+        sim.join()
 
     total_time = time() - init
 

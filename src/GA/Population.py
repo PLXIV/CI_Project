@@ -6,6 +6,7 @@ from time import time
 from datetime import timedelta
 from itertools import starmap
 from multiprocessing import Pool
+import queue
 
 PROCESSES = 6
 
@@ -31,11 +32,16 @@ class Population(object):
         self.truncation_size = int(pop_size * truncation_percentage)
         if self.truncation_size % 2 != 0:
             self.truncation_size -= 1
+        self.number_of_saved_performances = 15
+        self.best_performances = queue.Queue(self.number_of_saved_performances)
+        self.best_individuals = queue.Queue(self.number_of_saved_performances)
+        self.best_historical_individual = None
+        self.best_historical_performance = 0
 
     def max_pop_size(self):
         no_truncated = self.pop_size - self.truncation_size
         return no_truncated + min(self.elitism_n, no_truncated)
-            
+
     def update_genes(self):
         scores = self.get_scores()
         best_performance = max(scores)
@@ -45,7 +51,12 @@ class Population(object):
         self.elitism()
         self.mutation()
         self.new_generation()
-        
+
+        self.actualize_performance(best_performance, best_gene)
+        if best_performance > self.best_historical_performance:
+            self.best_historical_performance = best_performance
+            self.best_historical_individual = best_gene.gene
+
         return best_performance, best_gene, len(self.genes)
 
     def do_cycle(self):
@@ -58,7 +69,32 @@ class Population(object):
         self.elitism()
         self.mutation()
         self.new_generation()
+
         return [best_performance, best_gene]
+
+    def convergence_criteria(self):
+        best_per_array = np.array(self.best_performances.queue)
+        best_indiv_array = np.array(self.best_individuals.queue)
+
+        if self.best_performances.full() and np.all(best_per_array[0] == best_per_array):
+            print('Converged due to repeating the best performance')
+            return True
+        if self.best_individuals.full() and np.all(best_indiv_array[0,:] == best_indiv_array):
+            print('Converged due to repeating the best individual')
+            return True
+
+        if self.best_performances.full() and np.all(self.best_historical_performance > best_per_array+1):
+            print('Converged due to no improvement')
+            return True
+        return False
+
+    def actualize_performance(self, performance, individual):
+        if self.best_performances.full():
+            self.best_performances.get()
+        if self.best_individuals.full():
+            self.best_individuals.get()
+        self.best_performances.put(performance)
+        self.best_individuals.put(individual.gene)
 
 
     def get_scores(self):
