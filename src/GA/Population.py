@@ -1,4 +1,11 @@
-from Gene import *
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jan 20 00:08:21 2019
+
+@author: PauL
+"""
+
+from GA.Gene import *
 import numpy as np
 import random
 from scipy.spatial import distance
@@ -16,7 +23,9 @@ class Population(object):
     def __init__(self,
                  generation_id=0, pop_size=100, dna_size=10, elitism_n=2,
                  truncation_percentage=0.33, cross_over_points=3,
-                 crossover_probability=0.9, mutation_probability=0.01, spread_mutation = 0, multiprocessing = True):
+                 crossover_probability=0.9, mutation_probability=0.01, 
+                 spread_mutation = 0, objects_codified = 2,
+                 multiprocessing = True):
 
         self.generation_id = generation_id
         self.pop_size = pop_size
@@ -31,6 +40,7 @@ class Population(object):
         self.mutation_probability = mutation_probability
         self.offspring = []
         self.truncation_size = int(pop_size * truncation_percentage)
+        self.objects_codified = objects_codified
         if self.truncation_size % 2 != 0:
             self.truncation_size -= 1
         self.number_of_saved_performances = 15
@@ -49,8 +59,8 @@ class Population(object):
         best_gene = self.genes[scores.argmax()]
         self.truncation()
         self.crossover()
-        self.elitism()
         self.mutation()
+        self.elitism()
         self.new_generation()
 
         self.actualize_performance(best_performance, best_gene)
@@ -64,11 +74,11 @@ class Population(object):
         self.run_population()
         scores = self.get_scores()
         best_performance = max(scores)
-        best_gene = self.genes[scores.argmax()]
+        best_gene = self.genes[scores.argmax()]        
         self.truncation()
         self.crossover()
-        self.elitism()
         self.mutation()
+        self.elitism()
         self.new_generation()
 
         return [best_performance, best_gene]
@@ -148,31 +158,60 @@ class Population(object):
         get_best = performance[:self.pop_size - self.truncation_size]
         self.genes = np.array(self.genes)[get_best]
 
+
+    def check_genes(self, cuts, cut_index, genInfo1, genInfo2, i, j):
+        if cuts[cut_index] == j:
+            if genInfo1 == i:
+                genInfo1 = i + 1
+                genInfo2 = i
+            else:
+                genInfo1 = i
+                genInfo2 = i + 1
+            if cut_index < self.crossover_points - 1:
+                cut_index += 1
+
+        return genInfo1, genInfo2, cut_index
+            
+
+    def crossover_objects(self):
+        assert(self.dna_size/self.objects_codified == 0)
+        len_object =  self.dna_size/self.objects_codified
+        np.random.shuffle(self.genes)
+        for i in range(0, len(self.genes), 2):
+            genInfo1 = i
+            genInfo2 = i + 1
+            newGen1 = []
+            newGen2 = [] 
+            for j in range(self.objects_codified-1):
+                start_obj = len_object*j
+                end_obj = len_object*(j+1)
+                cuts = random.sample(range(start_obj, end_obj), self.crossover_points)
+                cuts.sort()
+                cut_index = 0
+                for z in range(start_obj, end_obj, 1):
+                    print(z)
+                    genInfo1, genInfo2, cut_index = self.check_genes(self, cuts, cut_index, genInfo1, i, j)
+                    newGen1.append(self.genes[genInfo1].gene[j])
+                    newGen2.append(self.genes[genInfo2].gene[j])
+                    
+            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen1))
+            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen2))
+            
+
     def crossover(self):
         np.random.shuffle(self.genes)
         for i in range(0, len(self.genes), 2):
             genInfo1 = i
             genInfo2 = i + 1
+            newGen1 = []
+            newGen2 = []
             cuts = random.sample(range(1, self.dna_size - 1), self.crossover_points)
             cuts.sort()
             cut_index = 0
-            newGen1 = []
-            newGen2 = []
             for j in range(self.dna_size):
-                if cuts[cut_index] == j:
-                    if genInfo1 == i:
-                        genInfo1 = i + 1
-                        genInfo2 = i
-                    else:
-                        genInfo1 = i
-                        genInfo2 = i + 1
-
-                    if cut_index < self.crossover_points - 1:
-                        cut_index += 1
-
+                genInfo1, genInfo2, cut_index = self.check_genes(cuts, cut_index, genInfo1, genInfo2, i, j)
                 newGen1.append(self.genes[genInfo1].gene[j])
                 newGen2.append(self.genes[genInfo2].gene[j])
-
             self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen1))
             self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen2))
 
@@ -193,8 +232,10 @@ class Population(object):
 if __name__ == "__main__":
     init = time()
     a = Population(generation_id=0, pop_size=10, dna_size=10, elitism_n=2,
-                   truncation_percentage=0.33, cross_over_points=3,
-                   crossover_probability=0.9, mutation_probability=0.1, spread_mutation= 0, multiprocessing = False)
+                   truncation_percentage=0.33, cross_over_points=2,
+                   crossover_probability=0.9, mutation_probability=0.1,
+                   spread_mutation= 0, objects_codified = 2,
+                   multiprocessing = False)
 
     results = []
     for i in range(100):

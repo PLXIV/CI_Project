@@ -21,7 +21,8 @@ def run_genetics(rows, cols, n_intersections, seed, max_generations=40, max_sim_
 
     population = Population(generation_id=0, pop_size=20, dna_size=max_sim_steps * number_of_lights, elitism_n=100,
                             truncation_percentage=0.33, cross_over_points=50,
-                            crossover_probability=0.9, mutation_probability=0.005, multiprocessing=False)
+                            crossover_probability=0.9, mutation_probability=0.005,
+                            spread_mutation= 0, objects_codified = 2, multiprocessing=False)
 
     print('Maximum population size: ', population.max_pop_size())
     cities = [City(rows, cols, n_intersections, seed) for _ in range(population.max_pop_size())]
