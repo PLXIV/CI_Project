@@ -3,22 +3,23 @@ from view.drawer import Drawer
 from GA.Population import Population
 import threading
 import numpy as np
-from time import sleep
+from time import sleep, time
 from random import choice
 from multiprocessing import Pool
+from datetime import timedelta
 
 PROCESSES = 8
-ENABLE_MULTIPROCESSING = True
+ENABLE_MULTIPROCESSING = False
 
 def run_genetics(city):
 
     number_of_lights = len(city.grid.roads_with_lights)
     steps_generations = 100
-    steps_simulation = 200
+    steps_simulation = 100
     n_simulations = 10
     population = Population(generation_id=0, pop_size=20, dna_size=steps_simulation*number_of_lights, elitism_n=100,
                    truncation_percentage=0.33, cross_over_points=50,
-                   crossover_probability=0.9, mutation_probability=0.005, multiprocessing = False)
+                   crossover_probability=0.9, mutation_probability=0.005, multiprocessing=False)
    
     for generation in range(steps_generations):
         if ENABLE_MULTIPROCESSING:
@@ -48,13 +49,13 @@ def run_gene(gene, number_of_lights, n_simulations, steps_simulation):
 
 
 if __name__ == "__main__":
-
+    init = time()
     
     # City
-    city = City(rows=40, cols=40, n_intersections=15)
-    city.grid.generate(seed=63095)
+    city = City(rows=30, cols=30, n_intersections=15)
+    city.grid.generate(seed=13011)
 
-
+    city_time = time() - init
 
     # Graphics
     drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)
@@ -64,6 +65,10 @@ if __name__ == "__main__":
     t.start()
     drawer.run()
     t.join()
+    total_time = time() - init
+
+    print('Time spent on generating the city:', timedelta(seconds=city_time), '\n Total time of the simulation:', timedelta(seconds=total_time))
+
 
 
 
