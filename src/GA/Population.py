@@ -31,6 +31,22 @@ class Population(object):
         self.truncation_size = int(pop_size * truncation_percentage)
         if self.truncation_size % 2 != 0:
             self.truncation_size -= 1
+            
+    def update_genes(self):
+        scores = self.get_scores()
+        best_performance = max(scores)
+        best_gene = self.genes[scores.argmax()]
+        self.truncation()
+        self.crossover()
+        self.elitism()
+        self.mutation()
+        self.new_generation()
+        print('new population size: ', len(self.genes))
+        print('best fitness: ', best_performance)
+        print('best gene: ', best_gene)
+        print('-'*10)
+        
+        return best_performance, best_gene
 
     def do_cycle(self):
         self.run_population()
