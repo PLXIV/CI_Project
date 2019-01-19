@@ -24,6 +24,7 @@ class City:
         self.cars_despawned = 0
         self.cars_spawned = 0
         for car in self.cars:
+            car.cell.car = None
             self.onDelCar(car)
         self.cars = []
 
@@ -63,7 +64,7 @@ class City:
                 free_spawns.append(spawn)
 
         if len(free_spawns) == 0:
-            print('No free spawn points!')
+            # print('No free spawn points!')
             return
 
         car = Car(free_spawns, despawns)
