@@ -93,12 +93,12 @@ if __name__ == "__main__":
 
     # Sim parameters
     max_sim_steps = 200
-    num_sim = 50
+    num_sim = 500
 
     city = City(rows, cols, n_intersections, seed)
 
     # Run
-    run_all_genetic(city,max_sim_steps,num_sim)
+    run_all_genetic(city, max_sim_steps,num_sim)
     city.clean()
     run_all_random(city, max_sim_steps,num_sim)
     city.clean()
