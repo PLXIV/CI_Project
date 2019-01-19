@@ -1,5 +1,5 @@
 from enum import Enum
-
+from random import choice
 
 class Orientation(Enum):
     Horizontal = 1
@@ -50,7 +50,7 @@ class CellRoad(Cell):
         self.parents = []
         self.hasCrosswalk = False
         self.hasLights = False
-        self.lights = Lights.CARS_GREEN
+        self.lights = choice([Lights.CARS_GREEN,Lights.CARS_RED])
         self.car = None
         self.destinations = {}
 
