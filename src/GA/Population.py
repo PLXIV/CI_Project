@@ -1,4 +1,4 @@
-from GA.Gene import *
+from Gene import *
 import numpy as np
 import random
 from scipy.spatial import distance
@@ -16,13 +16,14 @@ class Population(object):
     def __init__(self,
                  generation_id=0, pop_size=100, dna_size=10, elitism_n=2,
                  truncation_percentage=0.33, cross_over_points=3,
-                 crossover_probability=0.9, mutation_probability=0.01, multiprocessing = True):
+                 crossover_probability=0.9, mutation_probability=0.01, spread_mutation = 0, multiprocessing = True):
 
         self.generation_id = generation_id
         self.pop_size = pop_size
         self.dna_size = dna_size
-
+        
         self.multiprocessing = multiprocessing
+        self.spread_mutation = spread_mutation
         self.genes = self._initPopulation()
         self.elitism_n = elitism_n
         self.crossover_points = cross_over_points
@@ -103,7 +104,7 @@ class Population(object):
     def _initPopulation(self):
         population = []
         for g in range(self.pop_size):
-            population.append(Gene(dna_size=self.dna_size))
+            population.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation))
         return population
 
     def mutation(self):
@@ -172,8 +173,8 @@ class Population(object):
                 newGen1.append(self.genes[genInfo1].gene[j])
                 newGen2.append(self.genes[genInfo2].gene[j])
 
-            self.offspring.append(Gene(dna_size=self.dna_size, gene=newGen1))
-            self.offspring.append(Gene(dna_size=self.dna_size, gene=newGen2))
+            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen1))
+            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen2))
 
     def new_generation(self):
         self.genes = np.copy(self.offspring)
@@ -193,7 +194,7 @@ if __name__ == "__main__":
     init = time()
     a = Population(generation_id=0, pop_size=10, dna_size=10, elitism_n=2,
                    truncation_percentage=0.33, cross_over_points=3,
-                   crossover_probability=0.9, mutation_probability=0.01, multiprocessing = False)
+                   crossover_probability=0.9, mutation_probability=0.1, spread_mutation= 0, multiprocessing = False)
 
     results = []
     for i in range(100):
