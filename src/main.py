@@ -22,33 +22,40 @@ def run_genetics(city):
                    crossover_probability=0.9, mutation_probability=0.005, multiprocessing=False)
    
     for generation in range(steps_generations):
+        cities = [city for i in population.genes]
+        lights = [number_of_lights for i in population.genes]
+        simulations = [n_simulations for i in population.genes]
+        steps = [steps_simulation for i in population.genes]
+        args = [cities, population.genes, lights, simulations, steps]
         if ENABLE_MULTIPROCESSING:
             pool = Pool(PROCESSES)
-            scores = pool.map(run_gene, population.genes)
+            scores = pool.starmap(run_gene, zip(args))
             pool.close()
             for i, s in enumerate(scores):
                 population.genes[i].score = s
         else:
             for gene in population.genes:  
-                gene.score = run_gene(gene, number_of_lights, n_simulations, steps_simulation)
+                gene.score = run_gene(gene)
         best_performance, best_gene = population.update_genes()
 
 
-def run_gene(gene, number_of_lights, n_simulations, steps_simulation):
-    average_fitness = []
-    for single_simulation in range(n_simulations):
-        lights_gene = gene.gene
-        lights_gene = np.reshape(lights_gene, [number_of_lights, steps_simulation]).T
-        for i in range(steps_simulation):
-            lights = lights_gene[i,:]
-            city.step(lights)
-        fitness = city.cars_despawned
-        average_fitness.append(fitness)
-        city.clean()
-    return np.mean(average_fitness)
-
+#city, gene, number_of_lights, n_simulations, steps_simulation
+def run_gene(city, gene, number_of_lights, n_simulations, steps_simulation):
+#    average_fitness = []
+#    for single_simulation in range(args[3]):
+#        lights_gene = args[1]
+#        lights_gene = np.reshape(lights_gene, [args[2], args[4]]).T
+#        for i in range(args[4]):
+#            lights = lights_gene[i,:]
+#            args[0].step(lights)
+#        fitness = args[0].cars_despawned
+#        average_fitness.append(fitness)
+#        args[0].clean()
+#    return np.mean(average_fitness)
+    return np.random.rand()
 
 if __name__ == "__main__":
+
     init = time()
     
     # City
