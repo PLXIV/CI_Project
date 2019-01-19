@@ -8,7 +8,7 @@ from random import choice
 
 def run_genetics(city):
     number_of_lights = len(city.grid.roads_with_lights)
-    steps = 10
+    steps = 200
     a = Population(generation_id=0, pop_size=10, dna_size=steps*number_of_lights, elitism_n=2,
                    truncation_percentage=0.33, cross_over_points=3,
                    crossover_probability=0.9, mutation_probability=0.01, multiprocessing = False)
@@ -35,10 +35,8 @@ if __name__ == "__main__":
 
     
     # City
-    city = City(rows=20, cols=20, n_intersections=4)
+    city = City(rows=70, cols=70, n_intersections=30)
     city.grid.generate(seed=27367)
-
-
 
     # Graphics
     drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)

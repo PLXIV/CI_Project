@@ -1,12 +1,8 @@
 from grid import Grid
 from car import Car
+
 from cell import Lights
-
-from cell import Lights, CellType
-import random as rnd
-
-from cell import Lights, CellType
-import random as rnd
+from copy import deepcopy
 
 class City:
     MAX_CARS = 20
@@ -20,12 +16,18 @@ class City:
         self.onNewCar = None
         self.onDelCar = None
 
+    def clone(self):
+        cloned = City(self.grid.rows, self.grid.cols, self.grid.n_intersections)
+        cloned.grid = deepcopy(self.grid)
+        return cloned
+
     def clean(self):
         self.cars_despawned = 0
         self.cars_spawned = 0
         for car in self.cars:
             car.cell.car = None
-            self.onDelCar(car)
+            if self.onDelCar is not None:
+                self.onDelCar(car)
         self.cars = []
 
     def get(self, row, col):

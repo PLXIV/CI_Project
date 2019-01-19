@@ -2,8 +2,8 @@ from cell import CellType, CellBuilding, CellRoad, CellSidewalk, CellEmpty, Dire
 import random as rnd
 from math import sqrt
 from square import Square
-from bfs import generate_bfs_dictionaries
 from square import Orientation
+from pathing import set_shortest_paths
 
 # The grid represents the city blocks and streets
 class Grid:
@@ -116,7 +116,9 @@ class Grid:
         self.__generate_sidewalk_connections()
         self.__set_spawn_roads()
         self.__set_despawn_roads()
-        generate_bfs_dictionaries(self)
+
+        roads = [cell for row in self.__cells for cell in row if cell.type == CellType.Road]
+        set_shortest_paths(roads)
         return True
 
     def __set_spawn_roads(self):

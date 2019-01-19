@@ -7,40 +7,36 @@ Created on Fri Jan 18 23:20:09 2019
 from cell import CellType
 import queue
 
-def search_bfs(grid, start_p, final_p):
+def backtrack_bfs(curr_node, dict_path, start_p):
+    path = []
+    previous = curr_node
+    while curr_node != start_p:
+        previous = curr_node
+        curr_node = dict_path[curr_node]
+        path.insert(0, curr_node)
+    return path, previous
+
+def search_bfs(start_p, final_p):
 
     dict_path = {}
-    dict_path[start_p] =  None
-    found = False
-    
-    children = queue.Queue()
-    children.put(start_p)
+    dict_path[start_p] = None
+    next_nodes = queue.Queue()
+    next_nodes.put(start_p)
     visited_nodes = []
 
-    while (not found and not children.empty()):
-        current_node  = children.get()
+    while not next_nodes.empty():
+        current_node = next_nodes.get()
         if current_node is final_p:
-            found = True
+            return backtrack_bfs(current_node, dict_path, start_p)
         
         if current_node.children:
-            for i in current_node.children:
-                if not i in visited_nodes:
-                    children.put(i)
-                    dict_path[i] = current_node
+            for child in current_node.children:
+                if not child in visited_nodes:
+                    next_nodes.put(child)
+                    dict_path[child] = current_node
             visited_nodes.append(current_node)
 
-    if not found:
-        path = None
-        previous = None
-    else:
-        path = []
-        previous = current_node
-        while(current_node != start_p):
-            previous = current_node
-            current_node = dict_path[current_node]
-            path.append(current_node)   
-         
-    return path, previous
+    return None, None
         
 def generate_bfs_dictionaries(grid):
     all_roads = []
@@ -63,11 +59,15 @@ def generate_bfs_dictionaries(grid):
             if current_road != posible_destination:
                 if not posible_destination in all_destinations[current_road].keys():
 
-                    path, previous = search_bfs(grid, current_road, posible_destination)
+                    path, previous = search_bfs(current_road, posible_destination)
                     all_destinations[current_road][posible_destination] = previous
+                    print(current_road)
+                    print(posible_destination)
+                    print(previous)
+                    print(path)
                     if path:
-                        for node in range(len(path)-1,0,-1):
-                            for next_node in range(len(path)-2,-1,-1):
+                        for node in range(len(path) - 1):
+                            for next_node in range(1, len(path)):
                                 if not path[next_node] in all_destinations[path[node]].keys():
                                     all_destinations[path[node]][path[next_node]] = path[next_node -1]
                 else:
@@ -76,7 +76,7 @@ def generate_bfs_dictionaries(grid):
                 all_destinations[current_road][posible_destination] = None
 
         if i % 2 == 0 or i == 0 or i == (max_roads - 1):
-            print('\rCalculating BFS: {:d} {:d} {:.1f}%, {:.1f}% skipped'.format(i, max_roads, 100.0 * (i + 1) * max_roads / total, 100.0 * skipped / total), end='    ')
+            print('\rCalculating BFS: {:.1f}%, {:.1f}% skipped'.format(100.0 * (i + 1) * max_roads / total, 100.0 * skipped / total), end='    ')
     
     for current_road in all_roads:     
         current_road.destinations = all_destinations[current_road]
