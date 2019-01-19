@@ -4,7 +4,7 @@ import random
 from scipy.spatial import distance
 from time import time
 from datetime import timedelta
-from itertools import starmap
+from itertools import starmap, chain
 from multiprocessing import Pool
 
 PROCESSES = 6
@@ -54,12 +54,12 @@ class Population(object):
         best_performance = max(scores)
         best_gene = self.genes[scores.argmax()]
         self.truncation()
-        self.crossover()
+        self.multiprocessing_crossovers()
+#        self.crossover()
         self.elitism()
         self.mutation()
         self.new_generation()
         return [best_performance, best_gene]
-
 
     def get_scores(self):
         return np.array([g.score for g in self.genes])
@@ -77,9 +77,6 @@ class Population(object):
     @staticmethod
     def compute_score(gen):
         target = np.zeros(10)
-#        a = 0
-#        for i in range(1, 2 * 10 ** 3):
-#            a = np.math.factorial(i)
         return 1 - distance.hamming(target, gen.gene)
 
     @staticmethod
@@ -105,11 +102,65 @@ class Population(object):
         for i in elite:
             self.offspring.append(self.genes[i])
 
+    def generate_args_multiprocessing(self, processes):
+        args = []
+        for i in processes:
+            args.append([i, self.dna_size, self.crossover_points])
+        return args
+        
+
     def truncation(self):
         scores = self.get_scores()
         performance = scores.argsort()[::-1]
         get_best = performance[:self.pop_size - self.truncation_size]
         self.genes = np.array(self.genes)[get_best]
+
+    def multiprocessing_crossovers(self):
+        np.random.shuffle(self.genes)
+        step_size = int('%.0f'%(len(self.genes)/PROCESSES))
+        if step_size % 2 != 0:
+            step_size -= 1
+        processes = []
+        for i in range(PROCESSES-1):
+            processes.append(self.genes[step_size*i: step_size*(i+1)])
+        processes.append(self.genes[step_size*(i+1):])
+        args = self.generate_args_multiprocessing(processes)
+        pool = Pool(PROCESSES)
+        offspring = pool.starmap(self.multiprocessing_crossover, args)
+        pool.close()
+        self.offspring = list(chain.from_iterable(offspring))
+        
+            
+        
+    @staticmethod
+    def multiprocessing_crossover(genes, dna_size, crossover_points):
+        offspring = []
+        for i in range(0, len(genes), 2):
+            genInfo1 = i
+            genInfo2 = i + 1
+            cuts = random.sample(range(1, dna_size - 1), crossover_points)
+            cuts.sort()
+            cut_index = 0
+            newGen1 = []
+            newGen2 = []
+            for j in range(dna_size):
+                if cuts[cut_index] == j:
+                    if genInfo1 == i:
+                        genInfo1 = i + 1
+                        genInfo2 = i
+                    else:
+                        genInfo1 = i
+                        genInfo2 = i + 1
+
+                    if cut_index < crossover_points - 1:
+                        cut_index += 1
+
+                newGen1.append(genes[genInfo1].gene[j])
+                newGen2.append(genes[genInfo2].gene[j])
+
+            offspring.append(Gene(dna_size=dna_size, gene=newGen1))
+            offspring.append(Gene(dna_size=dna_size, gene=newGen2))
+        return offspring        
 
     def crossover(self):
         np.random.shuffle(self.genes)
@@ -155,7 +206,7 @@ class Population(object):
 
 if __name__ == "__main__":
     init = time()
-    a = Population(generation_id=0, pop_size=10, dna_size=10, elitism_n=2,
+    a = Population(generation_id=0, pop_size=100, dna_size=10, elitism_n=2,
                    truncation_percentage=0.33, cross_over_points=3,
                    crossover_probability=0.9, mutation_probability=0.01, multiprocessing = False)
 

@@ -65,7 +65,6 @@ if __name__ == "__main__":
     # City
     city = City(rows=100, cols=100, n_intersections=15)
     city.grid.generate(seed=13011)
-
     city_time = time() - init
 
     # Graphics
