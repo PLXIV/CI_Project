@@ -13,19 +13,19 @@ def search_bfs(grid, start_p, final_p):
     dict_path[start_p] =  None
     found = False
     
-    childrens = queue.Queue()
-    childrens.put(start_p)
+    children = queue.Queue()
+    children.put(start_p)
     visited_nodes = []
 
-    while (found == False and not childrens.empty()):
-        current_node  = childrens.get()
+    while (not found and not children.empty()):
+        current_node  = children.get()
         if current_node is final_p:
             found = True
         
         if current_node.children:
             for i in current_node.children:
                 if not i in visited_nodes:
-                    childrens.put(i)
+                    children.put(i)
                     dict_path[i] = current_node
             visited_nodes.append(current_node)
 
@@ -58,8 +58,6 @@ def generate_bfs_dictionaries(grid):
 
     skipped = 0
     for i, current_road in enumerate(all_roads):
-        if i % 2 == 0 or i == 0 or i == (max_roads -1):
-            print('\rCalculating BFS: {:d} {:d} {:.1f}, {:.1f} skipped'.format(i, max_roads, 100.0 * i * max_roads / total, 100.0 * skipped / total), end='    ')
 
         for posible_destination in all_roads:
             if current_road != posible_destination:
@@ -76,6 +74,9 @@ def generate_bfs_dictionaries(grid):
                     skipped += 1
             else:
                 all_destinations[current_road][posible_destination] = None
+
+        if i % 2 == 0 or i == 0 or i == (max_roads - 1):
+            print('\rCalculating BFS: {:d} {:d} {:.1f}%, {:.1f}% skipped'.format(i, max_roads, 100.0 * (i + 1) * max_roads / total, 100.0 * skipped / total), end='    ')
     
     for current_road in all_roads:     
         current_road.destinations = all_destinations[current_road]

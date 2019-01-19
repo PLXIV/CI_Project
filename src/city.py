@@ -19,7 +19,7 @@ class City:
         self.cars_spawned = 0
         self.onNewCar = None
         self.onDelCar = None
-        
+
     def clean(self):
         self.cars_despawned = 0
         self.cars_spawned = 0
