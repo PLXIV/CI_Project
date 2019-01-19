@@ -11,6 +11,7 @@ from datetime import timedelta
 import sys
 sys.setrecursionlimit(5500)
 PROCESSES = 4
+
 ENABLE_MULTIPROCESSING = True
 
 
@@ -23,8 +24,9 @@ def generate_args(city, population, number_of_lights, n_simulations, steps_simul
 def run_genetics(city):
 
     number_of_lights = len(city.grid.roads_with_lights)
-    steps_generations = 500
-    steps_simulation = 100
+
+    steps_generations = 40
+    steps_simulation = 200
     n_simulations = 5
     population = Population(generation_id=0, pop_size=20, dna_size=steps_simulation*number_of_lights, elitism_n=100,
                    truncation_percentage=0.33, cross_over_points=50,
@@ -34,6 +36,7 @@ def run_genetics(city):
         if population.convergence_criteria():
             break
         print('Genreation', generation)
+
         args = generate_args(city, population, number_of_lights, n_simulations, steps_simulation)
         if ENABLE_MULTIPROCESSING:
             pool = Pool(PROCESSES)
@@ -47,6 +50,7 @@ def run_genetics(city):
         best_performance, best_gene = population.update_genes()
     print(population.best_historical_performance)
     print('Ended simulation')
+
 
 
 #city, gene, number_of_lights, n_simulations, steps_simulation
@@ -73,9 +77,11 @@ if __name__ == "__main__":
     init = time()
     
     # City
+
     #city = City(rows=30, cols=30, n_intersections=15)
 
     city = City(rows=20, cols=20, n_intersections=1)
+
     city.grid.generate(seed=13011)
 
     city_time = time() - init
