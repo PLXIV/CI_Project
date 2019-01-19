@@ -115,7 +115,7 @@ class Grid:
         self.__generate_sidewalk_connections()
         self.__set_spawn_roads()
         self.__set_despawn_roads()
-        self.destinations = generate_bfs_matrix(self)
+        generate_bfs_matrix(self)
         return True
 
     def __set_spawn_roads(self):

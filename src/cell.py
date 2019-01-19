@@ -71,17 +71,31 @@ class CellRoad(Cell):
 
     def active_sides(self):
         active = []
-        for element_list in [self.children, self.parents]:
-            for element in element_list:
-                if element.row == self.row + 1:
-                    active.append(Direction.Down)
-                elif element.row == self.row - 1:
-                    active.append(Direction.Up)
-                elif element.col == self.col + 1:
-                    active.append(Direction.Right)
-                elif element.col == self.col - 1:
-                    active.append(Direction.Left)
+        for cell in (self.children + self.parents):
+            if cell.row == self.row + 1:
+                active.append(Direction.Down)
+            elif cell.row == self.row - 1:
+                active.append(Direction.Up)
+            elif cell.col == self.col + 1:
+                active.append(Direction.Right)
+            elif cell.col == self.col - 1:
+                active.append(Direction.Left)
         return active
+
+    def neighbours_intersections(self):
+        intersections = {
+            Direction.Up: None,
+            Direction.Down: None,
+            Direction.Left: None,
+            Direction.Right: None
+        }
+        for cell in (self.children + self.parents):
+            if len(cell.orientation) > 1:
+                if cell.row == self.row + 1: intersections[Direction.Up] = cell
+                if cell.row == self.row - 1: intersections[Direction.Down] = cell
+                if cell.col == self.col + 1: intersections[Direction.Right] = cell
+                if cell.col == self.col - 1: intersections[Direction.Left] = cell
+        return intersections
 
 class CellBuilding(Cell):
 
