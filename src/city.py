@@ -31,7 +31,7 @@ class City:
         for i in range(self.grid.cols):
             for j in range(self.grid.rows):
                 cell = self.grid.get(j, i)
-                if cell.type == CellType.Road and cell.hasLights and rnd.random() < 0.1:
+                if cell.type == CellType.Road and cell.hasLights and rnd.random() < 0.05:
                     cell.lights = Lights.CARS_GREEN if cell.lights == Lights.CARS_RED else Lights.CARS_RED
 
     def __despawn_cars(self):

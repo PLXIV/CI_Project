@@ -149,12 +149,13 @@ class Grid:
                 if cell.type == CellType.Road:
                     neighbours = self.__get_road_neighbours(i, j)
                     singles = self.__get_single_orientation(neighbours)
-                    cell.hasCrosswalk = len(neighbours) > len(singles)
-                    # cell.hasLights = len(neighbours) > len(singles)
-                    cell.hasLights = False
-                    for child in cell.children:
-                        if len(child.orientation) > 1:
-                            cell.hasLights = True
+
+                    if len(cell.children) == 1 and len(cell.parents) == 1 and (len(neighbours) > len(singles)):
+                        cell.hasCrosswalk = True
+                        # Only add lights if any children is intersection
+                        for child in cell.children:
+                            if len(child.orientation) > 1:
+                                cell.hasLights = True
 
 
     def __cover_cells(self, cellToCover, cellClass):

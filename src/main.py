@@ -16,7 +16,7 @@ if __name__ == "__main__":
     city.grid.generate(seed=27367)
 
     # Graphics
-    drawer = Drawer(fps_target=120, city=city, width=800, height=800, margin=0)
+    drawer = Drawer(fps_target=30, city=city, width=800, height=800, margin=0)
 
     # Run
     t = threading.Thread(target=run_city, args=[city])

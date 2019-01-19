@@ -5,6 +5,7 @@ from cell import CellType, Direction, Lights
 from view.fps_counter import FPSCounter
 from view.cell_sprite import CellSprite
 from view.car_sprite import CarSprite
+from view.light_cell_sprite import LightsCellSprite
 import view.locations as loc
 from random import choice
 
@@ -104,49 +105,56 @@ class Drawer:
                 
                 if cell.type == CellType.Sidewalk:
                     image = self.images[loc.SIDEWALK]
+                    self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
 
                 if cell.type == CellType.Building:
                     house_array = [loc.HOUSE_1, loc.HOUSE_3, loc.HOUSE_4, loc.HOUSE_5, loc.HOUSE_6]
                     image = self.images[choice(house_array)]
+                    self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
 
                 if cell.type == CellType.Road:
                     active_sides = cell.active_sides()
 
                     if len(active_sides) == 4:
                         image = self.images[loc.ROAD_CROSS]
+                        self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
 
                     elif len(active_sides) == 3:
                         if   Direction.Up    not in active_sides: image = self.images[loc.ROAD_T_UP]
                         elif Direction.Down  not in active_sides: image = self.images[loc.ROAD_T_DOWN]
                         elif Direction.Left  not in active_sides: image = self.images[loc.ROAD_T_LEFT]
                         elif Direction.Right not in active_sides: image = self.images[loc.ROAD_T_RIGHT]
+                        self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
 
-                    elif cell.hasCrosswalk and cell.hasLights and cell.lights == Lights.CARS_GREEN:
-                        if   Direction.Up    in cell.direction: image = self.images[loc.ROAD_CROSSWALK_BOT_GREEN] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_GREEN]
-                        elif Direction.Down  in cell.direction: image = self.images[loc.ROAD_CROSSWALK_BOT_GREEN] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_GREEN]
-                        elif Direction.Left  in cell.direction: image = self.images[loc.ROAD_CROSSWALK_LEFT_GREEN] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_GREEN]
-                        elif Direction.Right in cell.direction: image = self.images[loc.ROAD_CROSSWALK_LEFT_GREEN] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_GREEN]
-
-                    elif cell.hasCrosswalk and cell.hasLights and cell.lights == Lights.CARS_RED:
-                        if   Direction.Up    in cell.direction: image = self.images[loc.ROAD_CROSSWALK_BOT_RED] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_RED]
-                        elif Direction.Down  in cell.direction: image = self.images[loc.ROAD_CROSSWALK_BOT_RED] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_RED]
-                        elif Direction.Left  in cell.direction: image = self.images[loc.ROAD_CROSSWALK_LEFT_RED] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_RED]
-                        elif Direction.Right in cell.direction: image = self.images[loc.ROAD_CROSSWALK_LEFT_RED] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_RED]
+                    elif cell.hasCrosswalk and cell.hasLights:
+                        image = []
+                        if Direction.Up in cell.direction:
+                            image.append(self.images[loc.ROAD_CROSSWALK_BOT_RED] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_RED])
+                            image.append(self.images[loc.ROAD_CROSSWALK_BOT_GREEN] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_GREEN])
+                        elif Direction.Down in cell.direction:
+                            image.append(self.images[loc.ROAD_CROSSWALK_BOT_RED] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_RED])
+                            image.append(self.images[loc.ROAD_CROSSWALK_BOT_GREEN] if cell.neighbours_intersections()[Direction.Up] is not None else self.images[loc.ROAD_CROSSWALK_TOP_GREEN])
+                        elif Direction.Left in cell.direction:
+                            image.append(self.images[loc.ROAD_CROSSWALK_LEFT_RED] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_RED])
+                            image.append(self.images[loc.ROAD_CROSSWALK_LEFT_GREEN] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_GREEN])
+                        elif Direction.Right in cell.direction:
+                            image.append(self.images[loc.ROAD_CROSSWALK_LEFT_RED] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_RED])
+                            image.append(self.images[loc.ROAD_CROSSWALK_LEFT_GREEN] if cell.neighbours_intersections()[Direction.Left] is not None else self.images[loc.ROAD_CROSSWALK_RIGHT_GREEN])
+                        self.cell_group.add(LightsCellSprite(image, size, cell, margin_w, margin_h))
 
                     elif cell.hasCrosswalk:
                         if   Direction.Up    in cell.direction: image = self.images[loc.ROAD_CROSSWALK_V]
                         elif Direction.Down  in cell.direction: image = self.images[loc.ROAD_CROSSWALK_V]
                         elif Direction.Left  in cell.direction: image = self.images[loc.ROAD_CROSSWALK_H]
                         elif Direction.Right in cell.direction: image = self.images[loc.ROAD_CROSSWALK_H]
+                        self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
 
                     else:
                         if   Direction.Up    in cell.direction: image = self.images[loc.ROAD_UP]
                         elif Direction.Down  in cell.direction: image = self.images[loc.ROAD_DOWN]
                         elif Direction.Left  in cell.direction: image = self.images[loc.ROAD_LEFT]
                         elif Direction.Right in cell.direction: image = self.images[loc.ROAD_RIGHT]
-
-                if cell.type != CellType.Empty:
-                    self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
+                        self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
 
     def run(self):
         self.running = True
@@ -174,4 +182,5 @@ class Drawer:
         self.screen.fill((255, 255, 255))
         self.cell_group.draw(self.screen)
         self.cars_group.draw(self.screen)
+        self.cell_group.update()
         self.cars_group.update()
