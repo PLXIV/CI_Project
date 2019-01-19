@@ -1,26 +1,28 @@
 from grid import Grid
 from car import Car
-import copy
-from cell import Lights, CellType
-import random as rnd
+
+from copy import deepcopy
+from cell import Lights
 
 class City:
     MAX_CARS = 100
     MAX_SPAWN_PER_STEP = 8
 
-    def __init__(self, rows, cols, n_intersections):
+    def __init__(self, rows, cols, n_intersections, generateSeed=None):
         self.grid = Grid(rows, cols, n_intersections)
         self.cars = []
         self.cars_despawned = 0
         self.cars_spawned = 0
         self.onNewCar = None
         self.onDelCar = None
-        
+
+        if generateSeed is not None:
+            self.grid.generate(generateSeed)
+
     def clone(self):
         cloned = City(self.grid.rows, self.grid.cols, self.grid.n_intersections)
-        cloned.grid = copy.deepcopy(self.grid)
+        cloned.grid = deepcopy(self.grid)
         return cloned
-
 
     def clean(self):
         self.cars_despawned = 0
@@ -34,11 +36,18 @@ class City:
     def get(self, row, col):
         return self.grid.get(row, col)
 
-    def step(self, light_values):
+    def step(self, light_values = None):
         self.__despawn_cars()
         self.__move_cars()
+        self.__spawn_cars()
+        if light_values is not None:
+            self.__set_lights(light_values)
+
+    def __set_lights(self, light_values):
         for i, cell in enumerate(self.grid.roads_with_lights):
             cell.lights = Lights.CARS_GREEN if light_values[i] else Lights.CARS_RED
+
+    def __spawn_cars(self):
         i = 0
         while len(self.cars) < City.MAX_CARS and i < City.MAX_SPAWN_PER_STEP:
             self.__spawn_car()

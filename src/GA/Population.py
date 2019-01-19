@@ -32,12 +32,15 @@ class Population(object):
         self.truncation_size = int(pop_size * truncation_percentage)
         if self.truncation_size % 2 != 0:
             self.truncation_size -= 1
-
         self.number_of_saved_performances = 15
         self.best_performances = queue.Queue(self.number_of_saved_performances)
         self.best_individuals = queue.Queue(self.number_of_saved_performances)
         self.best_historical_individual = None
         self.best_historical_performance = 0
+
+    def max_pop_size(self):
+        no_truncated = self.pop_size - self.truncation_size
+        return no_truncated + min(self.elitism_n, no_truncated)
 
     def update_genes(self):
         scores = self.get_scores()
@@ -48,16 +51,13 @@ class Population(object):
         self.elitism()
         self.mutation()
         self.new_generation()
-        print('new population size: ', len(self.genes))
-        print('best fitness: ', best_performance)
-        # print('best gene: ', best_gene)
-        print('-'*10)
+
         self.actualize_performance(best_performance, best_gene)
         if best_performance > self.best_historical_performance:
             self.best_historical_performance = best_performance
             self.best_historical_individual = best_gene.gene
 
-        return best_performance, best_gene
+        return best_performance, best_gene, len(self.genes)
 
     def do_cycle(self):
         self.run_population()

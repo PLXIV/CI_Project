@@ -12,14 +12,16 @@ from random import choice
 
 class Drawer:
 
-    def __init__(self, fps_target, city, width, height, margin=0):
+    def __init__(self, fps_target, city, width, height, options):
         pygame.init()
+        pygame.font.init()
         pygame.display.set_caption("CI project")
 
+        self.options = options
+        self.font = pygame.font.SysFont('arial', 16)
         self.clock = Clock()
         self.w = width
         self.h = height
-        self.margin = margin
         self.city = city
         self.fps_target = fps_target
         self.fps_counter = FPSCounter()
@@ -79,7 +81,7 @@ class Drawer:
                 return
 
     def __sprite_size(self):
-        size = ceil((min(self.w, self.h) - self.margin * 2) / self.city.grid.cols)
+        size = ceil((min(self.w, self.h)) / self.city.grid.cols)
         margin_w = floor((self.w - size * self.city.grid.cols) / 2)
         margin_h = floor((self.h - size * self.city.grid.rows) / 2)
         return size, margin_w, margin_h
@@ -163,10 +165,10 @@ class Drawer:
             self.__step()
             self.__events()
             pygame.display.update()
-            print('\rFPS: {:.1f}  '.format(self.fps_counter.tick()), end='')
             self.clock.tick(self.fps_target)
 
         pygame.quit()
+        self.options[0] = True
 
     def __events(self):
         for event in pygame.event.get():
@@ -184,3 +186,9 @@ class Drawer:
         self.cars_group.draw(self.screen)
         self.cell_group.update()
         self.cars_group.update()
+
+        fps_str = 'FPS: {:.1f}  '.format(self.fps_counter.tick())
+        fps_tex = self.font.render(fps_str, False, (0, 0, 0))
+        self.screen.blit(fps_tex,(5,5))
+
+
