@@ -29,12 +29,18 @@ def search_dfs(grid, start_p, final_p):
                     dict_path[i] = current_node
             visited_nodes.append(current_node)
 
-    path = []
-    previous = current_node
-    while(current_node != start_p):
+    if not found:
+        path = None
+        previous = None
+    else:
+        path = []
         previous = current_node
-        current_node = dict_path[current_node]
-        path.append(current_node)            
+        while(current_node != start_p):
+            previous = current_node
+            current_node = dict_path[current_node]
+            path.append(current_node)   
+        
+         
     return path, previous
         
 def generate_dfs_dictionaries(grid):
