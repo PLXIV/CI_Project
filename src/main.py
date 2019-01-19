@@ -6,7 +6,7 @@ from time import sleep
 def run_city(city):
     for i in range(10000):
         city.step()
-        sleep(0.5)
+        sleep(0.1)
 
 
 if __name__ == "__main__":

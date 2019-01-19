@@ -27,6 +27,9 @@ class LightsCellSprite(pygame.sprite.Sprite):
         self.rect.y = margin_h + cell.row * size
 
     def resize(self, size, margin_w, margin_h):
+        self.margin_w = margin_w
+        self.margin_h = margin_h
+        self.size = size
         if self.originals is None:
             self.image = pygame.Surface([size, size])
             self.image.fill((0, 0, 0))
