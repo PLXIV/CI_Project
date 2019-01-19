@@ -150,7 +150,12 @@ class Grid:
                     neighbours = self.__get_road_neighbours(i, j)
                     singles = self.__get_single_orientation(neighbours)
                     cell.hasCrosswalk = len(neighbours) > len(singles)
-                    cell.hasLights = len(neighbours) > len(singles)
+                    # cell.hasLights = len(neighbours) > len(singles)
+                    cell.hasLights = 0
+                    for child in cell.children:
+                        if len(child.orientation) > 1:
+                            cell.hasLights = 1
+
 
     def __cover_cells(self, cellToCover, cellClass):
         for i in range(self.rows):

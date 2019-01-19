@@ -11,7 +11,7 @@ def run_city(city):
 if __name__ == "__main__":
 
     # City
-    city = City(rows=100, cols=100, n_intersections=20)
+    city = City(rows=30, cols=30, n_intersections=8)
     city.grid.generate(seed=27367)
 
     # Graphics
