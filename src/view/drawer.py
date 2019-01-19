@@ -30,6 +30,7 @@ class Drawer:
         self.__load_images()
         self.__gen_sprites()
         self.city.onNewCar = self.__addCar
+        self.city.onDelCar = self.__delCar
 
     def __load_images(self):
         self.images = {
@@ -69,6 +70,12 @@ class Drawer:
         size, margin_w, margin_h = self.__sprite_size()
         car_image = choice([loc.CAR_1, loc.CAR_2, loc.CAR_3])
         self.cars_group.add(CarSprite(self.images[car_image], size, car, margin_w, margin_h))
+
+    def __delCar(self, car):
+        for car_sprite in self.cars_group:
+            if car_sprite.car == car:
+                self.cars_group.remove(car_sprite)
+                return
 
     def __sprite_size(self):
         size = ceil((min(self.w, self.h) - self.margin * 2) / self.city.grid.cols)

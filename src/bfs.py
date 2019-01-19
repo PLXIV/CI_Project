@@ -7,7 +7,7 @@ Created on Fri Jan 18 23:20:09 2019
 from cell import CellType
 import queue
 
-def search_dfs(grid, start_p, final_p):
+def search_bfs(grid, start_p, final_p):
 
     dict_path = {}
     dict_path[start_p] =  None
@@ -43,18 +43,26 @@ def search_dfs(grid, start_p, final_p):
          
     return path, previous
         
-def generate_dfs_dictionaries(grid):
+def generate_bfs_dictionaries(grid):
     all_roads = []
     for i in range(grid.rows):
         for j in range(grid.cols):
             if (grid.get(i,j).type == CellType.Road):
                 all_roads.append(grid.get(i,j))
-    
-    for current_road in all_roads:
+
+    max_roads = len(all_roads)
+    print('Calculating BFS: 0 of {:d}'.format(max_roads), end='')
+
+    for i, current_road in enumerate(all_roads):
+        if i % 2 == 0 or i == 0 or i == max_roads:
+            print('\rCalculating BFS: {:d} of {:d}'.format(i, max_roads), end='    ')
+
         destinations = {}
         for posible_destination in all_roads:
             if current_road != posible_destination:
-                _, previous = search_dfs(grid, current_road, posible_destination)
+                _, previous = search_bfs(grid, current_road, posible_destination)
                 destinations[posible_destination] = previous
+            else:
+                destinations[posible_destination] = None
         
         current_road.destinations = destinations

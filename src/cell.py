@@ -35,10 +35,7 @@ class Cell:
         self.col = col
 
     def __str__(self):
-        if self.type == CellType.Road:
-            return "■"
-        else:
-            return "□"
+        return 'Cell: ({:d},{:d})'.format(self.row, self.col)
 
     def __repr__(self):
         return 'Cell: ({:d},{:d})'.format(self.row, self.col)

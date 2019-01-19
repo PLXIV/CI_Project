@@ -2,10 +2,14 @@ from grid import Grid
 from car import Car
 
 class City:
+    MAX_CARS = 20
+    MAX_SPAWN_PER_STEP = 3
 
     def __init__(self, rows, cols, n_intersections):
         self.grid = Grid(rows, cols, n_intersections)
         self.cars = []
+        self.cars_despawned = 0
+        self.cars_spawned = 0
         self.onNewCar = None
         self.onDelCar = None
 
@@ -13,11 +17,28 @@ class City:
         return self.grid.get(row, col)
 
     def step(self):
+        self.__despawn_cars()
         self.__move_cars()
-        if len(self.cars) < 5:
-            self.__spawn_cars()
 
-    def __spawn_cars(self):
+        i = 0
+        while len(self.cars) < City.MAX_CARS and i < City.MAX_SPAWN_PER_STEP:
+            self.__spawn_car()
+            i += 1
+
+    def __despawn_cars(self):
+        new_cars = self.cars.copy()
+        for car in self.cars:
+            if car.cell == car.despawn:
+                car.cell.car = None
+                new_cars.remove(car)
+                self.cars_despawned += 1
+
+                if self.onDelCar is not None:
+                    self.onDelCar(car)
+
+        self.cars = new_cars
+
+    def __spawn_car(self):
         spawns = self.grid.spawn_roads
         despawns = self.grid.despawn_roads
         free_spawns = []
@@ -32,6 +53,7 @@ class City:
 
         car = Car(free_spawns, despawns)
         self.cars.append(car)
+        self.cars_spawned += 1
 
         if self.onNewCar is not None:
             self.onNewCar(car)

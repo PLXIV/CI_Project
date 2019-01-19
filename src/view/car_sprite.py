@@ -26,12 +26,18 @@ class CarSprite(pygame.sprite.Sprite):
 
     def rotate(self):
         target_degrees = 0
-        direction = self.car.cell.direction
-        if Direction.Down in direction:
+        next_cell = self.car.getNextCell()
+
+        if next_cell is None:
+            return
+
+        if next_cell.col == self.car.cell.col + 1:
+            target_degrees = 0
+        if next_cell.row == self.car.cell.row + 1:
             target_degrees = 270
-        elif Direction.Up in direction:
+        elif next_cell.row == self.car.cell.row - 1:
             target_degrees = 90
-        elif Direction.Left in direction:
+        elif next_cell.col == self.car.cell.col - 1:
             target_degrees = 180
 
         self.image = pygame.transform.rotate(self.image,  target_degrees - self.degrees)
