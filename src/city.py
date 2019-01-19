@@ -1,6 +1,9 @@
 from grid import Grid
 from car import Car
 
+from cell import Lights, CellType
+import random as rnd
+
 class City:
     MAX_CARS = 20
     MAX_SPAWN_PER_STEP = 3
@@ -24,6 +27,12 @@ class City:
         while len(self.cars) < City.MAX_CARS and i < City.MAX_SPAWN_PER_STEP:
             self.__spawn_car()
             i += 1
+
+        for i in range(self.grid.cols):
+            for j in range(self.grid.rows):
+                cell = self.grid.get(j, i)
+                if cell.type == CellType.Road and cell.hasLights and rnd.random() < 0.1:
+                    cell.lights = Lights.CARS_GREEN if cell.lights == Lights.CARS_RED else Lights.CARS_RED
 
     def __despawn_cars(self):
         new_cars = self.cars.copy()

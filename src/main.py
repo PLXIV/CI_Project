@@ -8,6 +8,7 @@ def run_city(city):
         city.step()
         sleep(0.5)
 
+
 if __name__ == "__main__":
 
     # City

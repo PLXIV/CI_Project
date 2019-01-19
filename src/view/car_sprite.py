@@ -56,8 +56,8 @@ class CarSprite(pygame.sprite.Sprite):
         self.degrees = 0
         self.rotate()
         self.rect = self.image.get_rect()
-        self.rect.x = self.margin_w + self.car.cell.col * size
-        self.rect.y = self.margin_h + self.car.cell.row * size
+        self.rect.x = margin_w + self.car.cell.col * size
+        self.rect.y = margin_h + self.car.cell.row * size
 
     def update(self):
         self.rotate()

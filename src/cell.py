@@ -50,7 +50,7 @@ class CellRoad(Cell):
         self.parents = []
         self.hasCrosswalk = False
         self.hasLights = False
-        self.lights = choice([Lights.CARS_GREEN,Lights.CARS_RED])
+        self.lights = Lights.CARS_GREEN
         self.car = None
         self.destinations = {}
 

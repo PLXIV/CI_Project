@@ -87,9 +87,7 @@ class Drawer:
         size, margin_w, margin_h = self.__sprite_size()
 
         for sprite in self.cell_group:
-            x = margin_w + sprite.col * size
-            y = margin_h + sprite.row * size
-            sprite.resize(size, x, y)
+            sprite.resize(size, margin_w, margin_h)
 
         for sprite in self.cars_group:
             sprite.resize(size, margin_w, margin_h)
@@ -101,8 +99,6 @@ class Drawer:
 
         for row in range(0, self.city.grid.rows):
             for col in range(0, self.city.grid.cols):
-                x = margin_h + self.margin + col * size
-                y = margin_w + self.margin + row * size
                 cell = self.city.grid.get(row, col)
                 image = None
                 
@@ -150,7 +146,7 @@ class Drawer:
                         elif Direction.Right in cell.direction: image = self.images[loc.ROAD_RIGHT]
 
                 if cell.type != CellType.Empty:
-                    self.cell_group.add(CellSprite(image, size, x, y, row, col))
+                    self.cell_group.add(CellSprite(image, size, cell, margin_w, margin_h))
 
     def run(self):
         self.running = True
