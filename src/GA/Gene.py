@@ -24,7 +24,6 @@ class Gene(object):
                 if self.spread_mutation > 0:
                     for j in range(1,self.spread_mutation+1, 1):     
                         if (i-j>=0):
-                            print(j)
                             self.gene[i-j] = int(not(self.gene[i-j]))
                         if (i+j< self.dna_size):
                             self.gene[i-j] = int(not(self.gene[i+j]))                           
