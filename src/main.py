@@ -19,7 +19,7 @@ def run_genetics(city):
 if __name__ == "__main__":
 
     # City
-    city = City(rows=20, cols=20, n_intersections=4)
+    city = City(rows=100, cols=100, n_intersections=1)
     city.grid.generate(seed=27367)
 
 

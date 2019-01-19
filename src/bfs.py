@@ -50,21 +50,21 @@ def generate_bfs_dictionaries(grid):
                 all_roads.append(grid.get(i,j))
 
     max_roads = len(all_roads)
-    print('Calculating BFS: 0 of {:d}'.format(max_roads), end='')
+    total = max_roads * max_roads
 
     all_destinations = {}
     for current_road in all_roads:
         all_destinations[current_road] = {}
-        
+
+    skipped = 0
     for i, current_road in enumerate(all_roads):
-        if i % 2 == 0 or i == 0 or i == max_roads:
-            print('\rCalculating BFS: {:d} of {:d}'.format(i, max_roads), end='    ')
-        
-        done = 0
+        if i % 2 == 0 or i == 0 or i == (max_roads -1):
+            print('\rCalculating BFS: {:d} {:d} {:.1f}, {:.1f} skipped'.format(i, max_roads, 100.0 * i * max_roads / total, 100.0 * skipped / total), end='    ')
+
         for posible_destination in all_roads:
             if current_road != posible_destination:
                 if not posible_destination in all_destinations[current_road].keys():
-                    done +=1
+
                     path, previous = search_bfs(grid, current_road, posible_destination)
                     all_destinations[current_road][posible_destination] = previous
                     if path:
@@ -72,6 +72,8 @@ def generate_bfs_dictionaries(grid):
                             for next_node in range(len(path)-2,-1,-1):
                                 if not path[next_node] in all_destinations[path[node]].keys():
                                     all_destinations[path[node]][path[next_node]] = path[next_node -1]
+                else:
+                    skipped += 1
             else:
                 all_destinations[current_road][posible_destination] = None
     
