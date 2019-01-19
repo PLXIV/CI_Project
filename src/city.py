@@ -5,6 +5,9 @@ from cell import Lights
 from cell import Lights, CellType
 import random as rnd
 
+from cell import Lights, CellType
+import random as rnd
+
 class City:
     MAX_CARS = 20
     MAX_SPAWN_PER_STEP = 3

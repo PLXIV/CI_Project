@@ -159,7 +159,6 @@ class Grid:
                                 cell.hasLights = True
                                 self.roads_with_lights.append(cell)
 
-
     def __cover_cells(self, cellToCover, cellClass):
         for i in range(self.rows):
             for j in range(self.cols):
