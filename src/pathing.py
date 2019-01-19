@@ -40,10 +40,18 @@ def set_shortest_paths(roads):
                     __save_path_dependency(parent, curr, child, destinations)
 
     __copycat(parent, dependencies, destinations)
-    for road in roads:
-        road.destinations = defaultdict(lambda: None)
-        for k, v in destinations[road].items():
-            road.destinations[k] = v
+    for origin in roads:
+        origin.destinations = dict()
+        for destination in roads:
+            if destination not in destinations[origin]:
+                origin.destinations[destination] = None
+            else:
+                origin.destinations[destination] = destinations[origin][destination]
+
+    # for road in roads:
+        #     road.destinations = defaultdict(lambda: None)
+            # for k, v in destinations[road].items():
+    # road.destinations[k] = v
 
 
 def __copycat(parent, dependencies, destinations):

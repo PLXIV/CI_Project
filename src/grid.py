@@ -4,6 +4,7 @@ from math import sqrt
 from square import Square
 from square import Orientation
 from pathing import set_shortest_paths
+from bfs import generate_bfs_dictionaries
 
 # The grid represents the city blocks and streets
 class Grid:
@@ -21,6 +22,7 @@ class Grid:
         self.despawn_roads = []
         self.destinations = {}
         self.roads_with_lights = []
+
 
     # Get a Cell from the grid
     def get(self, row, col):

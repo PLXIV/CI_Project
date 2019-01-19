@@ -32,6 +32,22 @@ class Population(object):
         if self.truncation_size % 2 != 0:
             self.truncation_size -= 1
 
+    def max_pop_size(self):
+        no_truncated = self.pop_size - self.truncation_size
+        return no_truncated + min(self.elitism_n, no_truncated)
+            
+    def update_genes(self):
+        scores = self.get_scores()
+        best_performance = max(scores)
+        best_gene = self.genes[scores.argmax()]
+        self.truncation()
+        self.crossover()
+        self.elitism()
+        self.mutation()
+        self.new_generation()
+        
+        return best_performance, best_gene, len(self.genes)
+
     def do_cycle(self):
         self.run_population()
         scores = self.get_scores()
@@ -43,6 +59,7 @@ class Population(object):
         self.mutation()
         self.new_generation()
         return [best_performance, best_gene]
+
 
     def get_scores(self):
         return np.array([g.score for g in self.genes])
@@ -102,7 +119,6 @@ class Population(object):
             cuts = random.sample(range(1, self.dna_size - 1), self.crossover_points)
             cuts.sort()
             cut_index = 0
-            cuts = [2, 4, 6]
             newGen1 = []
             newGen2 = []
             for j in range(self.dna_size):
