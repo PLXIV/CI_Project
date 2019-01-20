@@ -7,8 +7,11 @@ import sys
 import json
 sns.set()
 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 CONFIGURATION = 'configuration.json'
-GENE_FILE = '../data/1547994434_best_of_10_generations.npy'
+GENE_FILE = '../data/1547997289_best_of_5_generations.npy'
 SIMULATIONS = 500
 
 def run_simulations(city, gene, sim_steps, light_duration_steps, label, title, save_file):
@@ -27,8 +30,9 @@ def run_simulations(city, gene, sim_steps, light_duration_steps, label, title, s
     plt.xlabel('Fitness value')
     plt.ylabel('Proportion')
     plt.title(title)
+    plt.legend()
     plt.savefig(save_file)
-    print('Done !')
+    print('\nDone !')
 
 if __name__ == '__main__':
     sys.setrecursionlimit(10000)
@@ -74,7 +78,7 @@ if __name__ == '__main__':
     run_simulations(city,
                     best_individual,
                     data['simulation']['sim_steps'],
-                    data['simulation']['light_duration_steps'], 
+                    data['simulation']['light_duration_steps'],
                     label='Genetic',
                     title='Fitness Values of the Simulation Genetic Traffic Lights',
                     save_file='../data/fitness_genetic_lights.png')
