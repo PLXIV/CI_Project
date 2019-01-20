@@ -19,7 +19,7 @@ def generate_args(cities, number_of_lights, population, num_sim, max_sim_steps, 
 def run_genetics(rows, cols, n_intersections, seed, light_duration=1, max_generations=40, max_sim_steps=200, num_sim=5):
     dummy = City(rows, cols, n_intersections, seed)
     number_of_lights = len(dummy.grid.roads_with_lights)
-    lights_steps = ceil(max_sim_steps / light_duration) + 1
+    lights_steps = ceil(max_sim_steps / light_duration) + 1 # Todo +1 should not be needed
 
     population = Population(generation_id=0, pop_size=26, dna_size=lights_steps * number_of_lights, elitism_n=100,
                             truncation_percentage=0.33, cross_over_points=10,
