@@ -1,7 +1,7 @@
 import pygame
 from pygame.time import Clock
 from math import ceil, floor
-from cell import CellType, Direction, Lights
+from city.cell import CellType, Direction
 from view.fps_counter import FPSCounter
 from view.cell_sprite import CellSprite
 from view.car_sprite import CarSprite

@@ -1,15 +1,17 @@
-from grid import Grid
-from car import Car
+from city.grid import Grid
+from city.car import Car
+from city.cell import Lights
 
 from copy import deepcopy
-from cell import Lights
-
+from math import ceil
+from time import sleep
+import numpy as np
 
 class City:
     MAX_CARS = 100
     MAX_SPAWN_PER_STEP = 8
 
-    def __init__(self, rows, cols, n_intersections, generateSeed=None):
+    def __init__(self, rows, cols, n_intersections, generate_seed=None):
         self.grid = Grid(rows, cols, n_intersections)
         self.cars = []
         self.cars_despawned = 0
@@ -17,8 +19,8 @@ class City:
         self.onNewCar = None
         self.onDelCar = None
 
-        if generateSeed is not None:
-            self.grid.generate(generateSeed)
+        if generate_seed is not None:
+            self.grid.generate(generate_seed)
 
     def clone(self):
         cloned = City(self.grid.rows, self.grid.cols, self.grid.n_intersections)
@@ -43,6 +45,20 @@ class City:
         self.__spawn_cars()
         if light_values is not None:
             self.__set_lights(light_values)
+
+    def run(self, gene, sim_steps, light_duration_steps, sim_time=0.3, options=None):
+        lights_steps = ceil(sim_steps / light_duration_steps) + 1
+        lights_gene = np.reshape(gene, [len(self.grid.roads_with_lights), lights_steps]).T
+
+        for i in range(sim_steps):
+            lights = lights_gene[ceil(i / light_duration_steps), :]
+            self.step(lights)
+
+            if sim_time > 0:  # Wait time
+                sleep(sim_time)
+
+            if options is not None and options[0]:  # Quit option
+                return
 
     def __set_lights(self, light_values):
         for i, cell in enumerate(self.grid.roads_with_lights):
@@ -86,7 +102,6 @@ class City:
 
         if self.onNewCar is not None:
             self.onNewCar(car)
-
 
     def __move_cars(self):
         for car in self.cars:

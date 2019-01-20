@@ -5,7 +5,7 @@ Created on Sun Jan 20 00:08:21 2019
 @author: PauL
 """
 
-from GA.Gene import *
+from ga.individual import *
 import numpy as np
 import random
 from scipy.spatial import distance
@@ -21,13 +21,13 @@ PROCESSES = 6
 class Population(object):
 
     def __init__(self,
-                 generation_id=0, pop_size=100, dna_size=10, elitism_n=2,
-                 truncation_percentage=0.33, cross_over_points=3,
-                 crossover_probability=0.9, mutation_probability=0.01, 
+                 pop_size=100, dna_size=10, elitism_n=2,
+                 truncation_percentage=0.33, crossover_type='regular', crossover_points=3,
+                 crossover_probability=0.9, mutation_probability=0.01,
                  spread_mutation = 0, objects_codified = 2,
                  multiprocessing = True):
 
-        self.generation_id = generation_id
+        self.generation_id = 0
         self.pop_size = pop_size
         self.dna_size = dna_size
         
@@ -35,7 +35,8 @@ class Population(object):
         self.spread_mutation = spread_mutation
         self.genes = self._initPopulation()
         self.elitism_n = elitism_n
-        self.crossover_points = cross_over_points
+        self.crossover_type = crossover_type
+        self.crossover_points = crossover_points
         self.crossover_probability = crossover_probability
         self.mutation_probability = mutation_probability
         self.offspring = []
@@ -49,17 +50,23 @@ class Population(object):
         self.best_historical_individual = None
         self.best_historical_performance = 0
 
-    def max_pop_size(self):
-        no_truncated = self.pop_size - self.truncation_size
-        return no_truncated + min(self.elitism_n, no_truncated)
+    @staticmethod
+    def max_pop_size(initial_pop_size, elitism_n, truncation_percentage):
+        truncation_size = int(initial_pop_size * truncation_percentage)
+        if truncation_size % 2 != 0:
+            truncation_size -= 1
+        no_truncated = initial_pop_size - truncation_size
+        return no_truncated + min(elitism_n, no_truncated)
 
     def update_genes(self):
         scores = self.get_scores()
         best_performance = max(scores)
         best_gene = self.genes[scores.argmax()]
         self.truncation()
-        #self.crossover_objects()
-        self.crossover_regular()
+        if self.crossover_type == 'regular':
+            self.crossover_regular()
+        else:
+            self.crossover_objects()
         self.mutation()
         self.elitism()
         self.new_generation()
@@ -116,7 +123,7 @@ class Population(object):
     def _initPopulation(self):
         population = []
         for g in range(self.pop_size):
-            population.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation))
+            population.append(Individual(dna_size=self.dna_size, spread_mutation=self.spread_mutation))
         return population
 
     def mutation(self):
@@ -195,8 +202,8 @@ class Population(object):
                     newGen1.append(self.genes[genInfo1].gene[z])
                     newGen2.append(self.genes[genInfo2].gene[z])
                     
-            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen1))
-            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen2))
+            self.offspring.append(Individual(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen1))
+            self.offspring.append(Individual(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen2))
             
 
     def crossover_regular(self):
@@ -213,8 +220,8 @@ class Population(object):
                 genInfo1, genInfo2, cut_index = self.check_genes(cuts, cut_index, genInfo1, genInfo2, i, j)
                 newGen1.append(self.genes[genInfo1].gene[j])
                 newGen2.append(self.genes[genInfo2].gene[j])
-            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen1))
-            self.offspring.append(Gene(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen2))
+            self.offspring.append(Individual(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen1))
+            self.offspring.append(Individual(dna_size=self.dna_size, spread_mutation=self.spread_mutation, gene=newGen2))
 
     def new_generation(self):
         self.genes = np.copy(self.offspring)
@@ -233,7 +240,7 @@ class Population(object):
 if __name__ == "__main__":
     init = time()
     a = Population(generation_id=0, pop_size=10, dna_size=400, elitism_n=2,
-                   truncation_percentage=0.33, cross_over_points=2,
+                   truncation_percentage=0.33, crossover_points=2,
                    crossover_probability=0.9, mutation_probability=0.1,
                    spread_mutation= 0, objects_codified = 4,
                    multiprocessing = False)

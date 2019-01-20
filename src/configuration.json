@@ -1,0 +1,26 @@
+{
+  "simulation": {
+    "graphics": true,
+    "sim_steps": 500,
+    "light_duration_steps": 20
+  },
+  "map": {
+    "size": 30,
+    "intersections": 15,
+    "seed": 13011
+  },
+  "ga": {
+    "multiprocessing": true,
+    "processes": 6,
+    "crossover_type": "regular",
+    "max_generations": 300,
+    "sim_per_individual": 20,
+    "pop_size": 26,
+    "elitism_n": 100,
+    "truncation_percentage": 0.33,
+    "crossover_points": 10,
+    "crossover_probability": 0.9,
+    "mutation_probability": 0.005,
+    "spread_mutation": 0
+  }
+}

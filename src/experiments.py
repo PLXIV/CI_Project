@@ -1,12 +1,12 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 from random import choice
-from city import City
+from city.city import City
 import numpy as np
 sns.set()
 
-from time import time, sleep
-from datetime import timedelta
+from time import time
+
 
 def run_all_green(city,steps_simulation,n_simulations):
     print('begin green')

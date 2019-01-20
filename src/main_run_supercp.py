@@ -1,13 +1,12 @@
-from city import City
+from city.city import City
 import threading
 from time import time
 from datetime import timedelta
 
-from GA.optimize import run_genetics
+from ga.optimize import run_genetics
 import sys
 from time import sleep
 import numpy as np
-import pickle as pkl
 from math import ceil
 
 GRAPHICS = False
@@ -46,7 +45,7 @@ if __name__ == "__main__":
     max_generations_list = [50,100,200,300,400,700]
     num_sim = 20
 
-    #GA hyperparameters 
+    #ga hyperparameters
     pop_sizes = [20,40,60,80]
     elitism_n = [5,10,20,40]
     truncation_percentages = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]

@@ -1,5 +1,5 @@
 import random as rnd
-from cell import Lights
+from city.cell import Lights
 
 class Car:
 

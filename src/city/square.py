@@ -1,6 +1,5 @@
 import random as rnd
-from enum import Enum
-from cell import Orientation
+from city.cell import Orientation
 
 class Square:
     MIN_DIST = 2 # Minimum distance between the border of the square and the division line

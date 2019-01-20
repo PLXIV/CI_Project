@@ -4,7 +4,7 @@ Created on Fri Jan 18 23:20:09 2019
 
 @author: PauL
 """
-from cell import CellType
+from city.cell import CellType
 import queue
 
 def backtrack_bfs(curr_node, dict_path, start_p):

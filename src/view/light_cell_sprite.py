@@ -1,5 +1,5 @@
 import pygame
-from cell import Lights
+from city.cell import Lights
 
 
 class LightsCellSprite(pygame.sprite.Sprite):

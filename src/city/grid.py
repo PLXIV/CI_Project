@@ -1,10 +1,10 @@
-from cell import CellType, CellBuilding, CellRoad, CellSidewalk, CellEmpty, Direction
+from city.cell import CellType, CellBuilding, CellRoad, CellSidewalk, CellEmpty, Direction
 import random as rnd
 from math import sqrt
-from square import Square
-from square import Orientation
-from pathing import set_shortest_paths
-from bfs import generate_bfs_dictionaries
+from city.square import Square
+from city.square import Orientation
+from city.pathing import set_shortest_paths
+
 
 # The grid represents the city blocks and streets
 class Grid:

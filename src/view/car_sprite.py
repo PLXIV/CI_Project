@@ -1,5 +1,5 @@
 import pygame
-from cell import Direction
+
 
 class CarSprite(pygame.sprite.Sprite):
 
