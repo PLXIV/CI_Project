@@ -7,11 +7,12 @@ import sys
 
 
 CONFIGURATION = 'configuration.json'
-GENE_FILE = '../data/1547994434_best_of_10_generations.npy'
+GENE_FILE = '../data/1548000879_best_500_20_100_8_30_15_13011_regular_300_20_26_100_0+330000_10_0+900000_0+005000_0.npy'
 
 
 def run_city(city, gene, sim_steps, light_duration, options):
-    city.run(gene, sim_steps, light_duration, sim_time=0.3, options=options)
+    city.run(gene, sim_steps, light_duration, sim_time=0.04, options=options)
+    print('Done!')
 
 
 if __name__ == '__main__':

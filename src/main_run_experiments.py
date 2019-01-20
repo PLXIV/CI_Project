@@ -2,6 +2,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from random import choice
 from city.city import City
+from ga.optimize import generate_filename
+from time import time
 import numpy as np
 import sys
 import json
@@ -11,7 +13,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 CONFIGURATION = 'configuration.json'
-GENE_FILE = '../data/1547997289_best_of_5_generations.npy'
+GENE_FILE = '../data/1548000879_best_500_20_100_8_30_15_13011_regular_300_20_26_100_0+330000_10_0+900000_0+005000_0.npy'
 SIMULATIONS = 500
 
 def run_simulations(city, gene, sim_steps, light_duration_steps, label, title, save_file):
@@ -55,6 +57,7 @@ if __name__ == '__main__':
     best_individual = np.load(GENE_FILE)
     green_individual = [True for _ in range(len(best_individual))]
     random_individual = [choice([True, False]) for _ in range(len(best_individual))]
+    name = generate_filename(data['simulation'], data['map'], data['ga'])
 
     print('Running city with all lights green...')
     run_simulations(city,
@@ -63,7 +66,7 @@ if __name__ == '__main__':
                     data['simulation']['light_duration_steps'],
                     label='All green',
                     title='Fitness Values of the Simulation With Green Traffic Lights',
-                    save_file='../data/fitness_green_lights.png')
+                    save_file='../data/{:d}_fitness_green_lights_{:s}.png'.format(int(time()), name))
 
     print('Running city with random lights...')
     run_simulations(city,
@@ -72,7 +75,7 @@ if __name__ == '__main__':
                     data['simulation']['light_duration_steps'],
                     label='Random',
                     title='Fitness Values of the Simulation With Random Traffic Lights',
-                    save_file='../data/fitness_random_lights.png')
+                    save_file='../data/{:d}_fitness_random_lights_{:s}.png'.format(int(time()), name))
 
     print('Running city with genetic algorithm lights...')
     run_simulations(city,
@@ -81,4 +84,4 @@ if __name__ == '__main__':
                     data['simulation']['light_duration_steps'],
                     label='Genetic',
                     title='Fitness Values of the Simulation Genetic Traffic Lights',
-                    save_file='../data/fitness_genetic_lights.png')
+                    save_file='../data/{:d}_fitness_genetic_lights_{:s}.png'.format(int(time()), name))
