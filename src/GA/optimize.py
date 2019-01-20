@@ -22,9 +22,9 @@ def run_genetics(rows, cols, n_intersections, seed, light_duration=1, max_genera
     lights_steps = ceil(max_sim_steps / light_duration) + 1 # Todo +1 should not be needed
 
     population = Population(generation_id=0, pop_size=26, dna_size=lights_steps * number_of_lights, elitism_n=100,
-                            truncation_percentage=0.33, cross_over_points=10,
+                            truncation_percentage=0.33, cross_over_points=50,
                             crossover_probability=0.9, mutation_probability=0.005,
-                            spread_mutation= 0, objects_codified = 2, multiprocessing=False)
+                            spread_mutation= 0, objects_codified = number_of_lights, multiprocessing=False)
 
     print('Maximum population size: ', population.max_pop_size())
     cities = [City(rows, cols, n_intersections, seed) for _ in range(population.max_pop_size())]

@@ -5,7 +5,7 @@ from copy import deepcopy
 from cell import Lights
 
 class City:
-    MAX_CARS = 150
+    MAX_CARS = 100
     MAX_SPAWN_PER_STEP = 8
 
     def __init__(self, rows, cols, n_intersections, generateSeed=None):
