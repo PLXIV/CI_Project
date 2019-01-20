@@ -61,10 +61,6 @@ def generate_bfs_dictionaries(grid):
 
                     path, previous = search_bfs(current_road, posible_destination)
                     all_destinations[current_road][posible_destination] = previous
-                    print(current_road)
-                    print(posible_destination)
-                    print(previous)
-                    print(path)
                     if path:
                         for node in range(len(path) - 1):
                             for next_node in range(1, len(path)):

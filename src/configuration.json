@@ -1,7 +1,7 @@
 {
   "simulation": {
     "sim_steps": 500,
-    "light_duration_steps": 10,
+    "light_duration_steps": 20,
     "max_cars": 100,
     "max_cars_spawn": 8
   },

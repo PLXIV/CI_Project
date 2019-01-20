@@ -13,7 +13,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 CONFIGURATION = 'configuration.json'
-GENE_FILE = '../data/1548000879_best_500_20_100_8_30_15_13011_regular_300_20_26_100_0+330000_10_0+900000_0+005000_0.npy'
+GENE_FILE = '../data/1548007123_best_500_10_100_8_30_15_13011_regular_500_20_26_100_0+330000_10_0+900000_0+005000_0.npy'
 SIMULATIONS = 500
 
 def run_simulations(city, gene, sim_steps, light_duration_steps, label, title, save_file):

@@ -5,9 +5,9 @@ from city.square import Square
 from city.square import Orientation
 from city.pathing import set_shortest_paths
 
-
 # The grid represents the city blocks and streets
 class Grid:
+    MAX_TRIES = 20
 
     # Build a grid of rows and columns with n intersections
     def __init__(self, rows, cols, n_intersections):
@@ -39,11 +39,18 @@ class Grid:
         if self.n_intersections < 0:
             return
 
+        tries = 0
         max_iters = self.n_intersections * 2
         while not self.__generate_try(max_iters):
             seed = rnd.randint(1, 99999)
             print('Can not create map, retrying... seed={:d}'.format(seed))
             rnd.seed(seed)
+            tries += 1
+            if tries > Grid.MAX_TRIES:
+                print('Could not create map')
+                return False
+
+        return True
 
     # Generates a random grid
     def __generate_try(self, max_iters=0):
