@@ -44,8 +44,18 @@ if __name__ == "__main__":
     max_generations = 500
     num_sim = 20
 
+    #GA hyperparameters
+    ga_hyperparameters = {
+    'pop_size':26,
+    'elitism_n':100,
+    'truncation_percentage':0.33,
+    'cross_over_points':10,
+    'crossover_probability':0.9, 
+    'mutation_probability':0.005,
+    'spread_mutation': 0}
+    
     # Run
-    best_performance, best_gene = run_genetics(rows, cols, n_intersections, seed, light_duration, max_generations, max_sim_steps, num_sim)
+    best_performance, best_gene = run_genetics(rows, cols, n_intersections, seed, ga_hyperparameters, light_duration, max_generations, max_sim_steps, num_sim)
     print('Finished training, best performance:', best_performance)
     np.save('../data/best_' + str(max_generations)+'_generations.npy',best_gene)
 

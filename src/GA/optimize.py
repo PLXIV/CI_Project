@@ -16,21 +16,23 @@ def generate_args(cities, number_of_lights, population, num_sim, max_sim_steps, 
         args.append([cities[i], g.gene, number_of_lights, num_sim, max_sim_steps, lights_steps, light_duration])
     return args
 
-def run_genetics(rows, cols, n_intersections, seed, light_duration=1, max_generations=40, max_sim_steps=200, num_sim=5):
+def run_genetics(rows, cols, n_intersections, seed, hyperparameters, light_duration=1, max_generations=40, max_sim_steps=200, num_sim=5):
     dummy = City(rows, cols, n_intersections, seed)
     number_of_lights = len(dummy.grid.roads_with_lights)
     lights_steps = ceil(max_sim_steps / light_duration) + 1 # Todo +1 should not be needed
 
-    population = Population(generation_id=0, pop_size=26, dna_size=lights_steps * number_of_lights, elitism_n=100,
-                            truncation_percentage=0.33, cross_over_points=10,
-                            crossover_probability=0.9, mutation_probability=0.005,
-                            spread_mutation= 0, objects_codified = 2, multiprocessing=False)
+
+    population = Population(generation_id=0, pop_size=hyperparameters['pop_size'], dna_size=lights_steps * number_of_lights, elitism_n=hyperparameters['elitism_n'],
+                            truncation_percentage=hyperparameters['truncation_percentage'], cross_over_points=hyperparameters['cross_over_points'],
+                            crossover_probability=hyperparameters['crossover_probability'], mutation_probability=hyperparameters['mutation_probability'],
+                            spread_mutation= hyperparameters['spread_mutation'], objects_codified = number_of_lights, multiprocessing=False)
 
     print('Maximum population size: ', population.max_pop_size())
     cities = [City(rows, cols, n_intersections, seed) for _ in range(population.max_pop_size())]
 
     best_gene = []
     best_performance = 0
+    best_performance_historical = []
     for generation in range(max_generations):
         if population.convergence_criteria():
             break
@@ -48,12 +50,13 @@ def run_genetics(rows, cols, n_intersections, seed, light_duration=1, max_genera
                 gene.score = run_gene(gene)
 
         best_performance, best_gene, pop_size = population.update_genes()
-
+        best_performance_historical.append(best_performance)
         print('| New pop size:', pop_size, '| Best step fitness:', best_performance, '| Best all fitness:', population.best_historical_performance, '| Took', timedelta(seconds=(time() - init)))
 
     best_performance = population.best_historical_performance
     best_gene = population.best_historical_individual
-    return best_performance, best_gene
+    
+    return best_performance, best_gene, best_performance_historical
 
 
 # city, gene, number_of_lights, n_simulations, steps_simulation

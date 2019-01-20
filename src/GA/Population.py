@@ -43,7 +43,7 @@ class Population(object):
         self.objects_codified = objects_codified
         if self.truncation_size % 2 != 0:
             self.truncation_size -= 1
-        self.number_of_saved_performances = 20
+        self.number_of_saved_performances = 100
         self.best_performances = queue.Queue(self.number_of_saved_performances)
         self.best_individuals = queue.Queue(self.number_of_saved_performances)
         self.best_historical_individual = None
@@ -58,8 +58,8 @@ class Population(object):
         best_performance = max(scores)
         best_gene = self.genes[scores.argmax()]
         self.truncation()
-        self.crossover_objects()
-        #self.crossover_regular()
+        #self.crossover_objects()
+        self.crossover_regular()
         self.mutation()
         self.elitism()
         self.new_generation()
