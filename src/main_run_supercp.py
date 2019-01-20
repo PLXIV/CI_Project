@@ -40,52 +40,42 @@ if __name__ == "__main__":
     light_duration = 5
 
     # Sim parameters
-    
-    max_sim_steps_list =  [50,100,150,200]
-    max_generations_list = [50,100,200,300,400,700]
-    num_sim = 20
+    max_sim_steps = 250
+    max_generations = 250
+    num_sim = 15
+    light_duration_list = [10,20]
 
-    #ga hyperparameters
-    pop_sizes = [20,40,60,80]
-    elitism_n = [5,10,20,40]
-    truncation_percentages = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+    #GA hyperparameters 
+    pop_sizes = [60]
+    elitism_n = [20,40,60]
+    truncation_percentages = [0.1, 0.2, 0.3]
     cr_points = [10,20,30,40]
-    mutation_probabilities= [0.001,0.005, 0.01, 0.05, 0.1]
-    spreading = [0,1,2]
-
-    sz = pop_sizes[0]
-    eli = elitism_n[0]
-    tr_p = truncation_percentages[0]
-    c_p = cr_points[0]
-    m_p = mutation_probabilities[0]
-    s = spreading[0]
+    mutation_probabilities= [0.001, 0.01, 0.1]
+    spreading = [0]
 
 
-    
     # Run
-    for max_sim_steps in max_sim_steps_list:
-        for max_generations in max_generations_list:
-            for sz in pop_sizes:
-                for eli in elitism_n:
-                    for tr_p in truncation_percentages:
-                        for c_p in cr_points:
-                            for m_p in mutation_probabilities:
-                                for s in spreading:
-                                    ga_hyperparameters = {
-                                    'pop_size':sz,
-                                    'elitism_n':eli,
-                                    'truncation_percentage':tr_p,
-                                    'cross_over_points':c_p,
-                                    'crossover_probability':0.9, 
-                                    'mutation_probability':m_p,
-                                    'spread_mutation': s}
-                                    
-                                    best_performance, best_gene, best_performance_historical = run_genetics(rows, cols, n_intersections, seed, ga_hyperparameters, light_duration, max_generations, max_sim_steps, num_sim)
-                                    print('Finished training, best performance:', best_performance)
-                                    np.save( FOLDER+'best_'+ str(max_generations)+'_generations.npy',best_gene)
+    for sz in pop_sizes:
+        for light_duration in light_duration_list:
+            for eli in elitism_n:
+                for tr_p in truncation_percentages:
+                    for c_p in cr_points:
+                        for m_p in mutation_probabilities:
+                            for s in spreading:
+                                ga_hyperparameters = {
+                                'pop_size':sz,
+                                'elitism_n':eli,
+                                'truncation_percentage':tr_p,
+                                'cross_over_points':c_p,
+                                'crossover_probability':0.9, 
+                                'mutation_probability':m_p,
+                                'spread_mutation': s}
                                 
-                                    np.save(FOLDER+'best_'+ str(max_sim_steps)+'_sim_steps_' + str(max_generations)+'_generations_' + str(sz) + '_popsize_'+ str(eli) + '_elitism_' + str(tr_p) + '_tr_percentage_' + str(c_p)+\
-                                            '_cr_points_' + str(m_p) + '_mut_prob_' + str(s) + '_spread_' +'.npy',best_performance_historical)
+                                best_performance, best_gene, best_performance_historical = run_genetics(rows, cols, n_intersections, seed, ga_hyperparameters, light_duration, max_generations, max_sim_steps, num_sim)
+                                print('Finished training, best performance:', best_performance)
+                            
+                                np.save(FOLDER+ str(sz) + '_popsize_'+ str(light_duration) + '_light_' + str(eli) + '_elitism_' + str(tr_p) + '_tr_percentage_' + str(c_p)+\
+                                        '_cr_points_' + str(m_p) + '_mut_prob_' + str(s) + '_spread_' +'.npy',[best_performance_historical, best_gene])
 
 
     # Show best
