@@ -46,8 +46,8 @@ if __name__ == "__main__":
 
     # Run
     best_performance, best_gene = run_genetics(rows, cols, n_intersections, seed, light_duration, max_generations, max_sim_steps, num_sim)
-    print('Finished training')
-    np.save('../data/best_' + str(max_generations)+'_generations.npy',best_gene.gene)
+    print('Finished training, best performance:', best_performance)
+    np.save('../data/best_' + str(max_generations)+'_generations.npy',best_gene)
 
     # Show best
     if GRAPHICS:

@@ -43,7 +43,7 @@ class Population(object):
         self.objects_codified = objects_codified
         if self.truncation_size % 2 != 0:
             self.truncation_size -= 1
-        self.number_of_saved_performances = 15
+        self.number_of_saved_performances = 20
         self.best_performances = queue.Queue(self.number_of_saved_performances)
         self.best_individuals = queue.Queue(self.number_of_saved_performances)
         self.best_historical_individual = None
