@@ -4,6 +4,7 @@ from car import Car
 from copy import deepcopy
 from cell import Lights
 
+
 class City:
     MAX_CARS = 100
     MAX_SPAWN_PER_STEP = 8
