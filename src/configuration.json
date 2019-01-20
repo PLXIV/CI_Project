@@ -1,6 +1,5 @@
 {
   "simulation": {
-    "graphics": true,
     "sim_steps": 500,
     "light_duration_steps": 20,
     "max_cars": 100,
@@ -15,7 +14,7 @@
     "multiprocessing": true,
     "processes": 6,
     "crossover_type": "regular",
-    "max_generations": 300,
+    "max_generations": 5,
     "sim_per_individual": 20,
     "pop_size": 26,
     "elitism_n": 100,
