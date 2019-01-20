@@ -39,8 +39,10 @@ def run_all_random(city,steps_simulation,n_simulations):
     all_fitness = []
     for single_simulation in range(n_simulations):
         print('Simulation:', single_simulation)
+        lights = [choice([True, False]) for i in range(number_of_lights)]
         for i in range(steps_simulation):
-            lights = [choice([True, False]) for i in range(number_of_lights)]
+            if i % 5 == 0:
+                lights = [choice([True, False]) for i in range(number_of_lights)]
             city.step(lights)
             # sleep(0.1)
         fitness = city.cars_despawned
