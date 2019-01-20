@@ -6,7 +6,7 @@ from time import time
 from datetime import timedelta
 from math import ceil
 
-PROCESSES = 6
+PROCESSES = 8
 ENABLE_MULTIPROCESSING = True
 
 def generate_args(cities, number_of_lights, population, num_sim, max_sim_steps, lights_steps, light_duration):
