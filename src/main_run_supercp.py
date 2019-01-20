@@ -91,7 +91,7 @@ if __name__ == "__main__":
     # Show best
     if GRAPHICS:
         options = [False] # QUIT`x
-        city = City(rows, cols, n_intersections, seed)
+        city = City.generate(rows, cols, n_intersections, seed)
         drawer = Drawer(fps_target=30, city=city, width=800, height=800, options=options)
         sim = threading.Thread(target=run_city, args=[city, best_gene, max_sim_steps, light_duration, options])
         sim.start()

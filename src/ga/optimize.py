@@ -22,7 +22,7 @@ def generate_cities(map, hyperparameters):
                                            hyperparameters['truncation_percentage'])
 
     print('Maximum population size:', max_pop_size)
-    return [City(map['size'], map['size'], map['intersections'], map['seed']) for _ in range(max_pop_size)]
+    return [City.generate(map['size'], map['size'], map['intersections'], map['seed']) for _ in range(max_pop_size)]
 
 
 def run_genetics(map, hyperparameters, simulation):

@@ -11,7 +11,7 @@ class City:
     MAX_CARS = 100
     MAX_SPAWN_PER_STEP = 8
 
-    def __init__(self, rows, cols, n_intersections, generate_seed=None):
+    def __init__(self, rows, cols, n_intersections):
         self.grid = Grid(rows, cols, n_intersections)
         self.cars = []
         self.cars_despawned = 0
@@ -19,8 +19,14 @@ class City:
         self.onNewCar = None
         self.onDelCar = None
 
-        if generate_seed is not None:
-            self.grid.generate(generate_seed)
+    @staticmethod
+    def generate(rows, cols, n_intersections, seed=None):
+        city = City(rows, cols, n_intersections)
+        if seed is not None:
+            city.grid.generate(seed)
+        else:
+            city.grid.generate()
+        return city
 
     def clone(self):
         cloned = City(self.grid.rows, self.grid.cols, self.grid.n_intersections)

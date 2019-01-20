@@ -97,7 +97,7 @@ if __name__ == "__main__":
     max_sim_steps = 200
     num_sim = 500
 
-    city = City(rows, cols, n_intersections, seed)
+    city = City.generate(rows, cols, n_intersections, seed)
 
     # Run
     run_all_genetic(city, max_sim_steps,num_sim)

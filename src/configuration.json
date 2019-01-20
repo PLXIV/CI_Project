@@ -13,7 +13,7 @@
     "multiprocessing": true,
     "processes": 6,
     "crossover_type": "regular",
-    "max_generations": 300,
+    "max_generations": 10,
     "sim_per_individual": 20,
     "pop_size": 26,
     "elitism_n": 100,
