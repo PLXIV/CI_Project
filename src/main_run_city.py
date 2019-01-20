@@ -28,6 +28,8 @@ if __name__ == '__main__':
     city = City.generate(rows=data['map']['size'],
                          cols=data['map']['size'],
                          n_intersections=data['map']['intersections'],
+                         max_cars=data['simulation']['max_cars'],
+                         max_cars_spawn=data['simulation']['max_cars_spawn'],
                          seed=data['map']['seed'])
     gene = np.load(GENE_FILE)
 

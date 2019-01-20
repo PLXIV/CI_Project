@@ -2,7 +2,9 @@
   "simulation": {
     "graphics": true,
     "sim_steps": 500,
-    "light_duration_steps": 20
+    "light_duration_steps": 20,
+    "max_cars": 100,
+    "max_cars_spawn": 8
   },
   "map": {
     "size": 30,

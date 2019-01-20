@@ -16,19 +16,19 @@ def generate_args(cities, population, light_duration, sim_per_individual, sim_st
     return args
 
 
-def generate_cities(map, hyperparameters):
+def generate_cities(map, hyperparameters, simulation):
     max_pop_size = Population.max_pop_size(hyperparameters['pop_size'],
                                            hyperparameters['elitism_n'],
                                            hyperparameters['truncation_percentage'])
 
     print('Maximum population size:', max_pop_size)
-    return [City.generate(map['size'], map['size'], map['intersections'], map['seed']) for _ in range(max_pop_size)]
+    return [City.generate(map['size'], map['size'], map['intersections'], simulation['max_cars'], simulation['max_cars_spawn'], map['seed']) for _ in range(max_pop_size)]
 
 
 def run_genetics(map, hyperparameters, simulation):
     init = time()
 
-    cities = generate_cities(map, hyperparameters)
+    cities = generate_cities(map, hyperparameters, simulation)
     number_of_lights = len(cities[0].grid.roads_with_lights)
     lights_steps = ceil(simulation['sim_steps'] / simulation['light_duration_steps']) + 1  # Todo +1 should not be needed
     dna_size = lights_steps * number_of_lights

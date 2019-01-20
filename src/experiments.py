@@ -66,6 +66,7 @@ def run_all_genetic(city,steps_simulation,n_simulations):
 
     for single_simulation in range(n_simulations):
 
+        city.run(best_individual, )
         for i in range(steps_simulation):
             lights = lights_gene[i, :]
             city.step(lights)

@@ -8,11 +8,11 @@ from time import sleep
 import numpy as np
 
 class City:
-    MAX_CARS = 100
-    MAX_SPAWN_PER_STEP = 8
 
-    def __init__(self, rows, cols, n_intersections):
+    def __init__(self, rows, cols, n_intersections, max_cars, max_cars_spawn):
         self.grid = Grid(rows, cols, n_intersections)
+        self.max_cars = max_cars
+        self.max_cars_spawn = max_cars_spawn
         self.cars = []
         self.cars_despawned = 0
         self.cars_spawned = 0
@@ -20,8 +20,8 @@ class City:
         self.onDelCar = None
 
     @staticmethod
-    def generate(rows, cols, n_intersections, seed=None):
-        city = City(rows, cols, n_intersections)
+    def generate(rows, cols, n_intersections, max_cars, max_cars_spawn, seed=None):
+        city = City(rows, cols, n_intersections, max_cars, max_cars_spawn)
         if seed is not None:
             city.grid.generate(seed)
         else:
@@ -72,7 +72,7 @@ class City:
 
     def __spawn_cars(self):
         i = 0
-        while len(self.cars) < City.MAX_CARS and i < City.MAX_SPAWN_PER_STEP:
+        while len(self.cars) < self.max_cars and i < self.max_cars_spawn:
             self.__spawn_car()
             i += 1
 
