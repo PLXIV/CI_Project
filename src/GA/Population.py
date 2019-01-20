@@ -78,7 +78,7 @@ class Population(object):
         best_gene = self.genes[scores.argmax()]        
         self.truncation()
         #self.crossover_objects()
-        self.crossover_regular
+        self.crossover_regular()
         self.mutation()
         self.elitism()
         self.new_generation()

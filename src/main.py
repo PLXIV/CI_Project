@@ -35,12 +35,12 @@ if __name__ == "__main__":
     # City parameters
     rows = 30
     cols = 30
-    n_intersections = 5
+    n_intersections = 15
     seed = 13011
     light_duration = 5
 
     # Sim parameters
-    max_sim_steps = 200
+    max_sim_steps = 500
     max_generations = 500
     num_sim = 20
 
